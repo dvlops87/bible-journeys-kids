@@ -30,6 +30,8 @@
     font-family:'Literata', Georgia, 'Times New Roman', serif;
     min-height:100vh;
     -webkit-font-smoothing:antialiased;
+    -webkit-touch-callout:none; -webkit-tap-highlight-color:transparent;
+    -webkit-user-select:none; user-select:none;
   }
   html[lang="ko"] body{ font-family:'Noto Serif KR', 'Literata', Georgia, serif; }
   h1,h2,h3,.display{
@@ -170,6 +172,17 @@
   .reveal-msg{ min-height:22px; margin-top:16px; font-size:15px; color:var(--parchment); font-style:italic; }
   html[lang="ko"] .reveal-msg{ font-style:normal; word-break:keep-all; }
 
+  .continuity{
+    margin:0 0 20px; padding:12px 16px; border:1px solid var(--line); border-radius:4px;
+    background:rgba(202,162,87,.06); font-size:14.5px; line-height:1.6; color:var(--parchment-dim);
+  }
+  html[lang="ko"] .continuity{ word-break:keep-all; }
+  .continuity .c-label{
+    display:block; font-family:'IBM Plex Mono',monospace; font-size:10.5px; letter-spacing:.06em;
+    text-transform:uppercase; color:var(--bronze); margin-bottom:6px;
+  }
+  html[lang="ko"] .continuity .c-label{ letter-spacing:.02em; text-transform:none; }
+
   /* ---- title screen ---- */
   .title-screen{text-align:left;}
   .title-screen .display{
@@ -273,6 +286,7 @@
       langToggleLabel: '한국어',
       nextLabel: 'Next',
       retryLabel: 'Try again',
+      continuityLabel: 'From your choice',
       chooseOtherLabel: 'Choose another journey',
       select: {
         brand: 'Two Journeys',
@@ -340,6 +354,8 @@
         choiceRisky: 'Turn and run away. Leave the sheep alone.',
         journeyA: 'Met the beast staff-first, hand to hand.',
         journeyB: 'Trusted the sling before the beast drew close.',
+        continuityA: 'The real David fought them up close, catching the lion and bear and striking them down — 1 Samuel 17:34–35.',
+        continuityB: 'The real David caught the beasts up close, by the beard — but the sling was already his, ready for a bigger fight.',
         tag: 'Bethlehem'
       },
       anoint: {
@@ -365,6 +381,9 @@
         msg2: 'The king looks toward the window.',
         msg3: 'Saul says nothing. Tonight, his spear stays on the wall.',
         journeyPrefix: 'Played: ',
+        continuity1: 'The song stays with him: "The LORD is my shepherd" will guide him through every valley still ahead.',
+        continuity2: 'The song stays with him: he will keep seeing God’s glory, even in the valley still ahead.',
+        continuity3: 'The song stays with him: he already knows the valley of shadow — the next one won’t be the first.',
         tag: 'Saul’s hall'
       },
       valley: {
@@ -376,6 +395,7 @@
         choiceA: 'Take off the heavy armor. Take only a staff, a sling, and five stones.',
         choiceRisky: 'Accept Saul’s armor and helmet.',
         journey: 'Said no to Saul’s armor. Took a staff, a sling, and five stones.',
+        continuityA: 'With just a staff, a sling, and five smooth stones, David walks down into the valley to meet him.',
         tag: 'Valley of Elah'
       },
       duel: {
@@ -432,6 +452,8 @@
         choiceRisky: 'Shout from the reeds. Try to stop the princess.',
         journeyA: 'Miriam spoke up. Their own mother got to care for him.',
         journeyB: 'Miriam waited and watched first.',
+        continuityA: 'Just as Miriam offered, their own mother was paid to nurse him. When he grew, she brought him to Pharaoh’s daughter, who named him Moses — Exodus 2:9–10.',
+        continuityB: 'Miriam’s wait paid off: their mother was the one allowed to nurse him. When he grew, Pharaoh’s daughter named him Moses — Exodus 2:9–10.',
         tag: 'The Nile'
       },
       mBush: {
@@ -446,6 +468,8 @@
         choiceRisky: 'Say no. Stay with your sheep in Midian.',
         journeyA: 'Said yes at the bush, even though scared.',
         journeyB: 'Asked for a sign. Got three signs.',
+        continuityA: 'Moses set out without asking for a sign. He took his wife and sons and started back to Egypt at once — Exodus 4:20.',
+        continuityB: 'God gave three signs: the staff became a snake (Exodus 4:3), his hand turned leprous and was healed (Exodus 4:6–7), and water from the Nile turned to blood on the ground (Exodus 4:9).',
         tag: 'Horeb'
       },
       mPlagues: {
@@ -458,6 +482,8 @@
         choiceRisky: 'Say the warning gently instead.',
         journeyA: 'Warned Pharaoh clearly, one last time.',
         journeyB: 'Let each sign speak for itself.',
+        continuityA: 'Moses warned Pharaoh plainly, one last time — but Pharaoh’s heart stayed hard — Exodus 11:9–10.',
+        continuityB: 'The signs spoke for themselves — but Pharaoh still would not listen — Exodus 11:10.',
         tag: 'Pharaoh’s Court'
       },
       mPassover: {
@@ -472,6 +498,8 @@
         choiceRisky: 'Wait and see if the warning is true first.',
         journeyA: 'Marked the doorposts exactly as commanded.',
         journeyB: 'Ate quickly, staff in hand, ready to go.',
+        continuityA: 'Those who marked their doors stayed inside until morning, just as commanded — Exodus 12:22.',
+        continuityB: 'They ate in haste, cloaks tucked in, staff in hand, ready to go — Exodus 12:11.',
         tag: 'Goshen'
       },
       mRedsea: {
@@ -508,6 +536,7 @@
       langToggleLabel: 'English',
       nextLabel: '다음',
       retryLabel: '다시 시도',
+      continuityLabel: '당신의 선택 이후',
       chooseOtherLabel: '다른 이야기 선택하기',
       select: {
         brand: '두 개의 여정',
@@ -575,6 +604,8 @@
         choiceRisky: '몸을 돌려 도망간다. 양 떼는 그냥 둔다.',
         journeyA: '지팡이를 들고 짐승과 정면으로 맞섰다.',
         journeyB: '짐승이 가까이 오기 전에 물매를 믿고 던졌다.',
+        continuityA: '실제로 다윗은 사자와 곰을 가까이서 붙잡고 쳐죽였습니다 — 사무엘상 17장 34–35절.',
+        continuityB: '실제로는 짐승의 수염을 잡고 맞섰지만, 물매는 이미 다윗의 손에 익숙했고 더 큰 싸움을 기다리고 있었습니다.',
         tag: '베들레헴'
       },
       anoint: {
@@ -600,6 +631,9 @@
         msg2: '왕이 창밖을 바라봐요.',
         msg3: '사울은 아무 말도 안 해요. 오늘 밤은 무기를 쓰지 않아요.',
         journeyPrefix: '연주한 곡: ',
+        continuity1: '그 노래는 다윗과 함께 남습니다. “여호와는 나의 목자” — 앞으로 어떤 골짜기를 지나든 그를 이끌 것입니다.',
+        continuity2: '그 노래는 다윗과 함께 남습니다. 그는 앞으로도 어디서나 하나님의 영광을 볼 것입니다.',
+        continuity3: '그 노래는 다윗과 함께 남습니다. 그는 이미 사망의 골짜기를 알기에, 다음 골짜기도 처음은 아닙니다.',
         tag: '사울의 궁정'
       },
       valley: {
@@ -611,6 +645,7 @@
         choiceA: '무거운 갑옷을 벗는다. 지팡이와 물매, 돌 다섯 개만 챙긴다.',
         choiceRisky: '사울의 갑옷과 투구를 받아들인다.',
         journey: '사울의 갑옷을 받지 않았다. 지팡이와 물매, 돌 다섯 개를 챙겼다.',
+        continuityA: '지팡이와 물매, 돌 다섯 개만 든 채, 다윗은 골리앗을 만나러 골짜기로 내려갑니다.',
         tag: '엘라 골짜기'
       },
       duel: {
@@ -667,6 +702,8 @@
         choiceRisky: '갈대숲에서 소리쳐요. 공주를 막으려 해요.',
         journeyA: '미리암이 나섰어요. 친엄마가 아기에게 젖을 먹이게 됐어요.',
         journeyB: '미리암은 조금 더 지켜보고 기다렸다.',
+        continuityA: '미리암의 제안대로, 친어머니가 삯을 받고 아기에게 젖을 먹였습니다. 아기가 자라자 공주에게 데려가 “모세”라는 이름을 지어주었습니다 — 출애굽기 2장 9–10절.',
+        continuityB: '미리암이 기다린 끝에, 친어머니가 아기에게 젖을 먹이게 되었습니다. 아기가 자라자 공주는 그의 이름을 “모세”라 지었습니다 — 출애굽기 2장 9–10절.',
         tag: '나일강'
       },
       mBush: {
@@ -681,6 +718,8 @@
         choiceRisky: '거절한다. 미디안에서 계속 양을 친다.',
         journeyA: '무서웠지만 떨기나무 앞에서 그러겠다고 답했다.',
         journeyB: '표징을 구했다. 세 가지 표징을 받았다.',
+        continuityA: '모세는 표징을 구하지 않고 곧장 길을 나섰습니다. 아내와 아들들을 데리고 바로 이집트로 향합니다 — 출애굽기 4장 20절.',
+        continuityB: '하나님은 세 가지 표징을 보여주셨습니다. 지팡이가 뱀이 되었고(출애굽기 4장 3절), 손에 나병이 생겼다가 나았으며(출애굽기 4장 6–7절), 나일강 물을 땅에 부으면 피로 변했습니다(출애굽기 4장 9절).',
         tag: '호렙산'
       },
       mPlagues: {
@@ -693,6 +732,8 @@
         choiceRisky: '경고를 부드럽게 말한다.',
         journeyA: '마지막으로 파라오 앞에서 분명히 경고했다.',
         journeyB: '표징 하나하나가 스스로 말하게 두었다.',
+        continuityA: '모세는 마지막으로 파라오에게 분명히 경고했지만, 그의 마음은 여전히 완악했습니다 — 출애굽기 11장 9–10절.',
+        continuityB: '표징들이 스스로 말했지만, 파라오는 여전히 듣지 않았습니다 — 출애굽기 11장 10절.',
         tag: '파라오의 궁정'
       },
       mPassover: {
@@ -707,6 +748,8 @@
         choiceRisky: '피를 바르기 전에 좀 더 지켜본다.',
         journeyA: '명령받은 그대로 문설주에 피를 발랐다.',
         journeyB: '지팡이를 들고 서둘러 먹었다. 떠날 준비를 했다.',
+        continuityA: '문에 피를 바른 사람들은 명령받은 대로 아침까지 집 안에 머물렀습니다 — 출애굽기 12장 22절.',
+        continuityB: '그들은 허리를 동이고 지팡이를 손에 쥔 채, 서둘러 먹고 떠날 준비를 했습니다 — 출애굽기 12장 11절.',
         tag: '고센 땅'
       },
       mRedsea: {
@@ -803,6 +846,19 @@
   var lastDuelResult = null;
   var gameRafId = null;
   var gameResizeHandler = null;
+
+  // Set right before advancing past a choice; the next scene rendered
+  // consumes it once (via continuityHtml()) so the specific thing the
+  // player picked is acknowledged — with a real citation where Scripture
+  // gives one — instead of every path reading identically from here on.
+  var pendingContinuity = null;
+
+  function continuityHtml(){
+    if(!pendingContinuity) return '';
+    var text = pendingContinuity;
+    pendingContinuity = null;
+    return '<div class="continuity"><span class="c-label">'+t().continuityLabel+'</span>'+text+'</div>';
+  }
 
   function cleanupGame(){
     if(gameRafId){ cancelAnimationFrame(gameRafId); gameRafId = null; }
@@ -1044,7 +1100,8 @@
   function renderStoryScene(el, sceneKey, cfg){
     var s = t()[sceneKey];
     var html = '<div class="icon-row">'+icon(cfg.icon)+'<p class="eyebrow">'+s.eyebrow+'</p></div>' +
-                '<h2>'+s.h2+'</h2>';
+                '<h2>'+s.h2+'</h2>' +
+                continuityHtml();
     cfg.content.forEach(function(part){
       if(part.p) html += '<p>'+s[part.p]+'</p>';
       if(part.verse) html += '<p class="verse">'+s[part.verse]+'<br>'+s[part.ref]+'</p>';
@@ -1084,6 +1141,8 @@
         choiceRecord(sceneKey, c.journeyIsPrefixedLabel
           ? function(strs){ return strs.journeyPrefix + strs[c.field]; }
           : function(strs){ return strs[c.journeyField]; });
+        var continField = c.field.replace(/^choice/, 'continuity');
+        pendingContinuity = s[continField] || null;
       } else if(cfg.fixedJourneyField){
         choiceRecord(sceneKey, (function(field){ return function(strs){ return strs[field]; }; })(cfg.fixedJourneyField));
       }
@@ -1097,6 +1156,7 @@
     el.innerHTML =
       '<div class="icon-row">'+icon('sling')+'<p class="eyebrow">'+s.eyebrow+'</p></div>' +
       '<h2>'+s.h2+'</h2>' +
+      continuityHtml() +
       '<p>'+s.p1+'</p>' +
       '<div class="game-wrap">' +
         '<canvas id="duel-canvas" class="game-canvas-el" width="1000" height="340" tabindex="0" aria-label="'+s.ariaLabel+'"></canvas>' +
@@ -1368,6 +1428,7 @@
     el.innerHTML =
       '<div class="icon-row">'+icon('wave')+'<p class="eyebrow">'+s.eyebrow+'</p></div>' +
       '<h2>'+s.h2+'</h2>' +
+      continuityHtml() +
       '<p>'+s.p1+'</p>' +
       '<div class="game-wrap">' +
         '<canvas id="redsea-canvas" class="game-canvas-el" width="1000" height="340" tabindex="0" aria-label="'+s.ariaLabel+'"></canvas>' +
