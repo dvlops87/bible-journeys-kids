@@ -270,6 +270,7 @@
     en: {
       langToggleLabel: '한국어',
       nextLabel: 'Next',
+      retryLabel: 'Try again',
       chooseOtherLabel: 'Choose another journey',
       select: {
         brand: 'Two Journeys',
@@ -482,6 +483,7 @@
         initialMsg: 'The people cry out. Moses lifts his staff, and stretches his hand over the sea.',
         wobbleMsg: 'The wall of water shudders — your arm is dropping.',
         closeCallMsg: 'The water nearly closes. You raise your hand again just in time.',
+        failMsg: 'Your arm gives out. Pharaoh’s chariots reach the path before the last of the people are across — the wind dies, and the sea begins to close.',
         successMsg: 'The last of the people reach the far bank. Moses stretches his hand out once more, and the sea returns to its place.',
         journeyClean: 'Held the sea apart without a single close call.',
         journeyCloseCallsPrefix: 'Crossed the sea with ',
@@ -503,6 +505,7 @@
     ko: {
       langToggleLabel: 'English',
       nextLabel: '다음',
+      retryLabel: '다시 시도',
       chooseOtherLabel: '다른 이야기 선택하기',
       select: {
         brand: '두 개의 여정',
@@ -715,6 +718,7 @@
         initialMsg: '백성이 부르짖습니다. 모세가 지팡이를 들고, 바다 위로 손을 내뻗습니다.',
         wobbleMsg: '물벽이 흔들립니다 — 팔이 내려가고 있습니다.',
         closeCallMsg: '물이 거의 다시 합쳐질 뻔했습니다. 가까스로 다시 손을 들어올립니다.',
+        failMsg: '팔에 힘이 풀립니다. 마지막 사람들이 다 건너기도 전에 파라오의 병거가 길목에 다다르고 — 바람이 잦아들며 바다가 다시 합쳐지기 시작합니다.',
         successMsg: '마지막 사람이 건너편 기슭에 닿습니다. 모세가 다시 한 번 바다 위로 손을 내밀자, 바다가 제자리로 돌아옵니다.',
         journeyClean: '단 한 번의 위기도 없이 바다를 갈라놓았다.',
         journeyCloseCallsPrefix: '위기 상황 ',
@@ -1366,9 +1370,11 @@
       '</div>' +
       '<div class="game-hud"><div class="meter-track"><div class="meter-fill" id="redsea-meter"></div></div><div id="redsea-readout" class="mono">'+s.holdHint+'</div></div>' +
       '<p class="reveal-msg" id="redsea-msg">'+s.initialMsg+'</p>' +
-      '<div class="cta-row" id="redsea-next-row" hidden><button class="btn primary" id="redsea-next-btn">'+t().nextLabel+'</button></div>';
+      '<div class="cta-row" id="redsea-next-row" hidden><button class="btn primary" id="redsea-next-btn">'+t().nextLabel+'</button></div>' +
+      '<div class="cta-row" id="redsea-retry-row" hidden><button class="btn primary" id="redsea-retry-btn">'+t().retryLabel+'</button></div>';
 
     el.querySelector('#redsea-next-btn').addEventListener('click', function(){ go(6); });
+    el.querySelector('#redsea-retry-btn').addEventListener('click', function(){ resetGame(); });
 
     var canvas = el.querySelector('#redsea-canvas');
     var ctx = canvas.getContext('2d');
@@ -1376,6 +1382,7 @@
     var readout = el.querySelector('#redsea-readout');
     var msgEl = el.querySelector('#redsea-msg');
     var nextRow = el.querySelector('#redsea-next-row');
+    var retryRow = el.querySelector('#redsea-retry-row');
 
     var CW, CH;
     function fitCanvas(){
@@ -1389,11 +1396,12 @@
     gameResizeHandler = function(){ fitCanvas(); };
     window.addEventListener('resize', gameResizeHandler);
 
-    var HOLD_RATE = 100/9000;   // % per ms held
-    var DECAY_RATE = 100/3200;  // % per ms released (drains faster than it fills)
-    var progress = 0, holding = false, gameOver = false, closeCalls = 0;
+    var HOLD_RATE = 100/9000;          // % per ms held — fills the crossing meter
+    var DECAY_RATE = 100/3200;         // % per ms released — crossing meter drains faster than it fills
+    var CHARIOT_CHASE_RATE = 100/4500; // % per ms released — how fast Pharaoh's chariots close the gap
+    var CHARIOT_RECEDE_RATE = 100/14000; // % per ms held — chariots slowly lose ground while the wind holds
+    var progress = 0, chariotProgress = 0, holding = false, gameOver = false, failed = false, closeCalls = 0;
     var wasBelowThreshold = false;
-    var chariotStart = performance.now();
     var canvasFocused = false;
     var t0 = performance.now();
     var lastTm = 0;
@@ -1403,6 +1411,18 @@
       if(gameOver) return;
       holding = v;
       readout.textContent = holding ? s.holding : s.released;
+    }
+
+    function resetGame(){
+      progress = 0; chariotProgress = 0; gameOver = false; failed = false; closeCalls = 0;
+      wasBelowThreshold = false; holding = false; msgCooldown = 0; lastTm = 0;
+      t0 = performance.now();
+      msgEl.textContent = s.initialMsg;
+      readout.textContent = s.holdHint;
+      retryRow.hidden = true;
+      nextRow.hidden = true;
+      canvas.focus();
+      gameRafId = requestAnimationFrame(tick);
     }
 
     canvas.addEventListener('pointerdown', function(e){ e.preventDefault(); canvas.setPointerCapture(e.pointerId); setHolding(true); });
@@ -1454,11 +1474,12 @@
         ctx.beginPath(); ctx.arc(px, py, 4, 0, Math.PI*2); ctx.fill();
       }
 
-      var chariotElapsed = tm;
-      var chariotX = pathL - 60 + Math.min(pathL+40, chariotElapsed*0.012);
-      ctx.fillStyle = 'rgba(164,67,47,.85)';
-      ctx.fillRect(Math.max(-40,chariotX-16), CH-40, 30, 14);
-      ctx.beginPath(); ctx.arc(Math.max(-40,chariotX-1), CH-26, 6, 0, Math.PI*2); ctx.fill();
+      var catchX = pathL - 22;
+      var chariotX = -40 + (chariotProgress/100) * (catchX - (-40));
+      var chariotFlash = failed && !PREFERS_REDUCED_MOTION ? (Math.sin(tm*0.03)>0 ? 1 : 0.5) : 1;
+      ctx.fillStyle = 'rgba(164,67,47,' + (0.85*chariotFlash) + ')';
+      ctx.fillRect(chariotX-16, CH-40, 30, 14);
+      ctx.beginPath(); ctx.arc(chariotX-1, CH-26, 6, 0, Math.PI*2); ctx.fill();
 
       var moseX = pathL - 22, moseY = CH-30;
       ctx.strokeStyle = '#caa257'; ctx.lineWidth = 3; ctx.lineCap='round';
@@ -1477,8 +1498,10 @@
         var below = progress < 25;
         if(holding){
           progress = Math.min(100, progress + HOLD_RATE*dt);
+          chariotProgress = Math.max(0, chariotProgress - CHARIOT_RECEDE_RATE*dt);
         } else {
           progress = Math.max(0, progress - DECAY_RATE*dt);
+          chariotProgress = Math.min(100, chariotProgress + CHARIOT_CHASE_RATE*dt);
         }
         if(below && progress > 40 && wasBelowThreshold){
           closeCalls += 1;
@@ -1503,6 +1526,12 @@
           readout.textContent = '';
           nextRow.hidden = false;
           el.querySelector('#redsea-next-btn').focus();
+        } else if(chariotProgress >= 100){
+          gameOver = true; failed = true;
+          msgEl.textContent = s.failMsg;
+          readout.textContent = '';
+          retryRow.hidden = false;
+          el.querySelector('#redsea-retry-btn').focus();
         }
       }
       drawScene(tm, dt);
