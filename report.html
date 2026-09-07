@@ -1,0 +1,318 @@
+<title>The Shepherd King: Project Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..900&family=Literata:ital,wght@0,400;0,500;1,400;1,500&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --parchment-50:#f7f2e4;
+    --parchment-100:#efe6d0;
+    --ink-900:#241a0f;
+    --ink-600:#5e4d38;
+    --bronze:#95672a;
+    --bronze-bright:#b9862f;
+    --clay:#8a5a3c;
+    --line: rgba(90,66,32,.18);
+    --good:#3f7a4f;
+    --warn:#a4741f;
+    --bad:#a4432f;
+    --card: #fffdf7;
+    color-scheme: light;
+  }
+  @media (prefers-reduced-motion: no-preference){
+    .fadein{ animation: rise .5s ease both; }
+  }
+  @keyframes rise{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
+
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --parchment-50:#0b0e1a;
+      --parchment-100:#141a30;
+      --ink-900:#e9dfc4;
+      --ink-600:#a79f87;
+      --bronze:#e0ac52;
+      --bronze-bright:#f0c877;
+      --clay:#c99a72;
+      --line: rgba(202,162,87,.22);
+      --good:#7fd694;
+      --warn:#e0ac52;
+      --bad:#e0836f;
+      --card:#12162a;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --parchment-50:#0b0e1a;
+    --parchment-100:#141a30;
+    --ink-900:#e9dfc4;
+    --ink-600:#a79f87;
+    --bronze:#e0ac52;
+    --bronze-bright:#f0c877;
+    --clay:#c99a72;
+    --line: rgba(202,162,87,.22);
+    --good:#7fd694;
+    --warn:#e0ac52;
+    --bad:#e0836f;
+    --card:#12162a;
+    color-scheme: dark;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--parchment-50);
+    color:var(--ink-900);
+    font-family:'Literata', Georgia, serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{ font-family:'Fraunces', Georgia, serif; text-wrap:balance; }
+  .mono{ font-family:'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric:tabular-nums; }
+
+  #doc{ max-width:840px; margin:0 auto; padding:0 24px 80px; }
+
+  header.cover{
+    padding:56px 0 36px; border-bottom:1px solid var(--line);
+    display:flex; flex-direction:column; gap:10px;
+  }
+  .eyebrow{
+    font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--bronze);
+    margin:0; font-family:'IBM Plex Mono',monospace;
+  }
+  .cover h1{ font-size:clamp(34px,5.4vw,54px); font-weight:800; margin:2px 0 4px; line-height:1.02; }
+  .cover .sub{ font-size:17px; color:var(--ink-600); max-width:60ch; margin:0; line-height:1.6; }
+  .meta-row{
+    display:flex; gap:22px; flex-wrap:wrap; margin-top:14px;
+    font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--ink-600);
+  }
+  .meta-row span b{ color:var(--ink-900); font-weight:600; }
+
+  .stat-grid{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+    background:var(--line); border:1px solid var(--line); margin:28px 0 0;
+    border-radius:6px; overflow:hidden;
+  }
+  .stat-tile{ background:var(--card); padding:16px 14px; }
+  .stat-tile .n{ font-family:'IBM Plex Mono',monospace; font-size:26px; font-weight:600; color:var(--bronze-bright); }
+  .stat-tile .l{ font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-600); margin-top:4px; }
+  @media (max-width:640px){ .stat-grid{ grid-template-columns:repeat(2,1fr);} }
+
+  section{ padding:40px 0; border-bottom:1px solid var(--line); }
+  section:last-of-type{ border-bottom:none; }
+  .sec-num{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--bronze);
+    letter-spacing:.08em;
+  }
+  section h2{ font-size:28px; font-weight:650; margin:4px 0 16px; }
+  section > p{ font-size:16px; line-height:1.7; max-width:66ch; color:var(--ink-900); }
+  section > p.dim{ color:var(--ink-600); }
+
+  table{ width:100%; border-collapse:collapse; margin:18px 0; font-size:14.5px; }
+  caption{ caption-side:bottom; text-align:left; font-size:12px; color:var(--ink-600); padding-top:8px; }
+  th,td{ text-align:left; padding:9px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th{ font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-600); font-weight:600; }
+  td.ref{ font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--bronze); white-space:nowrap; }
+  .tablewrap{ overflow-x:auto; }
+
+  .score-row{ display:flex; align-items:center; gap:12px; }
+  .score-bar{ flex:1; height:8px; border-radius:4px; background:var(--line); overflow:hidden; }
+  .score-bar > i{ display:block; height:100%; background:var(--bronze-bright); border-radius:4px; }
+  .score-val{ font-family:'IBM Plex Mono',monospace; font-size:13px; width:34px; text-align:right; color:var(--ink-600); }
+  .pill{
+    display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:11px;
+    padding:2px 8px; border-radius:10px; letter-spacing:.03em; font-weight:600;
+  }
+  .pill.good{ background:color-mix(in srgb, var(--good) 18%, transparent); color:var(--good); }
+  .pill.warn{ background:color-mix(in srgb, var(--warn) 18%, transparent); color:var(--warn); }
+
+  .timeline{ list-style:none; margin:18px 0 0; padding:0; display:flex; flex-direction:column; }
+  .timeline li{
+    display:grid; grid-template-columns:96px 1fr; gap:16px; padding:14px 0;
+    border-top:1px solid var(--line);
+  }
+  .timeline li:first-child{ border-top:none; }
+  .timeline .tag{ font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--bronze); padding-top:2px; text-transform:uppercase; letter-spacing:.05em; }
+  .timeline .body b{ display:block; font-size:15px; margin-bottom:3px; }
+  .timeline .body span{ font-size:14px; color:var(--ink-600); line-height:1.55; }
+
+  .quote{
+    font-style:italic; color:var(--ink-600); border-left:2px solid var(--line);
+    padding:2px 0 2px 16px; margin:18px 0; font-size:15px; line-height:1.65;
+  }
+
+  .diagram{ margin:20px 0 4px; }
+  .diagram svg{ width:100%; height:auto; display:block; }
+
+  .card-row{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:16px; }
+  @media (max-width:640px){ .card-row{ grid-template-columns:1fr; } }
+  .card{ border:1px solid var(--line); border-radius:6px; padding:16px 18px; background:var(--card); }
+  .card h3{ font-size:14px; margin:0 0 6px; font-family:'IBM Plex Mono',monospace; letter-spacing:.03em; color:var(--bronze); text-transform:uppercase; }
+  .card p{ font-size:14px; line-height:1.6; margin:0; color:var(--ink-900); }
+
+  footer.doc-footer{
+    padding:30px 0 10px; font-size:12px; color:var(--ink-600);
+    font-family:'IBM Plex Mono',monospace;
+  }
+</style>
+
+<div id="doc">
+
+  <header class="cover fadein">
+    <p class="eyebrow">Project Report · Interactive Fiction</p>
+    <h1 class="display">The Shepherd King</h1>
+    <p class="sub">A bilingual, physics-driven retelling of 1&nbsp;Samuel 16–18 — seven narrative chapters, a playable slingshot duel, and three branching "parallel timeline" detours for the choices Scripture doesn't take.</p>
+    <div class="meta-row">
+      <span>Format: <b>single-file HTML / vanilla JS</b></span>
+      <span>Languages: <b>English, Korean</b></span>
+      <span>Status: <b>playable, iteratively tested</b></span>
+      <span>Prepared: <b>2026-09-07</b></span>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-tile"><div class="n">7</div><div class="l">Story chapters</div></div>
+      <div class="stat-tile"><div class="n">3</div><div class="l">Parallel branches</div></div>
+      <div class="stat-tile"><div class="n">5</div><div class="l">Stones per duel</div></div>
+      <div class="stat-tile"><div class="n">2</div><div class="l">Input modes<br><span style="font-size:10px;">pointer + keyboard</span></div></div>
+    </div>
+  </header>
+
+  <section class="fadein">
+    <p class="sec-num">01 — CONCEPT</p>
+    <h2>What it is</h2>
+    <p>The Shepherd King turns the David and Goliath narrative into a short interactive game rather than a static retelling. The player moves through David's arc — shepherd, court musician, reluctant champion — making small character choices, then plays out the duel itself as a real physics minigame: draw back a slingshot, judge the angle and power, and try to land a stone on Goliath's forehead before the five stones from the brook run out.</p>
+    <p class="dim">The build carries one explicit constraint throughout: dramatize freely between the verses, but never rewrite what the verses themselves say — the "what if" branches described in §4 exist specifically to keep that line visible rather than blurred.</p>
+  </section>
+
+  <section class="fadein">
+    <p class="sec-num">02 — NARRATIVE STRUCTURE</p>
+    <h2>Seven chapters, nine cited passages</h2>
+    <p>Each chapter dramatizes a specific, named passage rather than a paraphrase of "the David story" in general — the citation is shown in-game as a pull-quote, not just documented after the fact.</p>
+    <div class="tablewrap">
+    <table>
+      <thead><tr><th>Chapter</th><th>Scene</th><th>Reference</th><th>Player moment</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">1</td><td>The Hills of Bethlehem</td><td class="ref">1 Sam 17:34–36</td><td>Face the lion/bear — or risk abandoning the flock</td></tr>
+        <tr><td class="mono">2</td><td>The Horn of Oil</td><td class="ref">1 Sam 16:6–13</td><td>Passed over six brothers, anointed as the seventh</td></tr>
+        <tr><td class="mono">3</td><td>Strings Against the Storm</td><td class="ref">1 Sam 16:14–23</td><td>Choose which psalm-line eases Saul's torment</td></tr>
+        <tr><td class="mono">4</td><td>Forty Days of Taunts</td><td class="ref">1 Sam 17:4–7, 16–18, 38–40</td><td>Refuse Saul's armor — or risk wearing it</td></tr>
+        <tr><td class="mono">5</td><td>Five Stones from the Brook</td><td class="ref">1 Sam 17:40, 48–51</td><td>The duel — the game's one real mechanical test</td></tr>
+        <tr><td class="mono">6</td><td>His Ten Thousands</td><td class="ref">1 Sam 17:51–54, 18:7</td><td>Aftermath; a personalized summary of the path taken</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <section class="fadein">
+    <p class="sec-num">03 — THE DUEL MECHANIC</p>
+    <h2>A physics problem, not a quick-time event</h2>
+    <p>The slingshot is a real (if simplified) projectile-motion simulation: pull direction and distance set launch velocity, gravity is applied every frame, and a hit is only scored if the stone's arc actually intersects Goliath's forehead — a smaller, harder target than his body. This was also the game's main source of bugs during development (see §5).</p>
+    <div class="diagram">
+      <svg viewBox="0 0 760 230" xmlns="http://www.w3.org/2000/svg">
+        <line x1="20" y1="200" x2="740" y2="200" stroke="var(--line)" stroke-width="1.5"/>
+        <line x1="70" y1="200" x2="70" y2="150" stroke="var(--clay)" stroke-width="3"/>
+        <circle cx="70" cy="150" r="4" fill="var(--bronze-bright)"/>
+        <path d="M 70 150 Q 330 10 640 130" fill="none" stroke="var(--bronze)" stroke-width="2" stroke-dasharray="6 6"/>
+        <rect x="620" y="80" width="26" height="60" rx="2" fill="var(--ink-600)" opacity="0.5"/>
+        <circle cx="633" cy="72" r="12" fill="var(--ink-600)" opacity="0.6"/>
+        <circle cx="633" cy="70" r="3.4" fill="var(--bad)"/>
+        <text x="633" y="45" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink-600)">forehead</text>
+        <text x="70" y="180" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink-600)">sling</text>
+        <text x="390" y="205" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink-600)">D = horizontal distance (scales with screen width)</text>
+        <line x1="380" y1="60" x2="380" y2="120" stroke="var(--line)" stroke-width="1"/>
+        <text x="400" y="90" font-family="IBM Plex Mono, monospace" font-size="11" fill="var(--ink-600)">H = fixed height gain</text>
+      </svg>
+    </div>
+    <div class="card-row">
+      <div class="card">
+        <h3>Two input paths</h3>
+        <p>Drag-to-aim for pointer/touch; focus the canvas and use arrow keys (angle/power) plus Enter or Space for keyboard-only play — added after the first accessibility review flagged the duel as the one control excluded from keyboard use.</p>
+      </div>
+      <div class="card">
+        <h3>Screen-size-adaptive throw</h3>
+        <p>Every visual size (Goliath, the sling, the stone) stays fixed in pixels. Only the launch speed is recalculated from the live geometry — distance to Goliath and the fixed height gain — so a full pull reaches him at any canvas width, narrow phone to wide desktop.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="fadein">
+    <p class="sec-num">04 — PARALLEL TIMELINES</p>
+    <h2>Wrong choices lead somewhere, not nowhere</h2>
+    <p>Three of the decision scenes carry a fourth, riskier option beyond the canon ones. Choosing it doesn't end the game — it opens a short, clearly-labeled "what if" detour, then returns the player to the same fork to choose again. Each detour is visually marked (a violet rule, an explicit "Parallel Timeline" tag, and an in-text disclaimer) so it is never mistaken for the scriptural account.</p>
+    <div class="tablewrap">
+    <table>
+      <thead><tr><th>Fork</th><th>Canon path</th><th>Risky choice</th><th>Parallel branch</th></tr></thead>
+      <tbody>
+        <tr><td>Ch.1 — Hills</td><td>Face the beast (staff or sling)</td><td>Run and abandon the flock</td><td>"The Shepherd Who Ran"</td></tr>
+        <tr><td>Ch.3 — Court</td><td>Play one of three psalm-lines</td><td>Set down the lyre, answer Saul's rage</td><td>"Silenced Strings"</td></tr>
+        <tr><td>Ch.4 — Valley</td><td>Refuse Saul's armor</td><td>Accept the armor and helmet</td><td>"The Borrowed Armor"</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p class="quote">"⚠️ An imagined fork, not the account in Scripture." — appended to every parallel-branch text, in both languages.</p>
+  </section>
+
+  <section class="fadein">
+    <p class="sec-num">05 — QUALITY REVIEW</p>
+    <h2>Independent evaluation, then fixes</h2>
+    <p>A dedicated <span class="mono" style="font-size:14px;">game-critic</span> review agent played through the build and scored it before the accessibility and physics fixes below were made. Scores are out of 5.</p>
+    <table>
+      <tbody>
+        <tr>
+          <td style="width:180px;">Narrative fidelity</td>
+          <td><div class="score-row"><div class="score-bar"><i style="width:100%"></i></div><span class="score-val">5/5</span></div></td>
+        </tr>
+        <tr>
+          <td>Gameplay design</td>
+          <td><div class="score-row"><div class="score-bar"><i style="width:60%"></i></div><span class="score-val">3/5</span></div></td>
+        </tr>
+        <tr>
+          <td>UX &amp; accessibility</td>
+          <td><div class="score-row"><div class="score-bar"><i style="width:40%"></i></div><span class="score-val">2/5</span></div></td>
+        </tr>
+        <tr>
+          <td>Code quality</td>
+          <td><div class="score-row"><div class="score-bar"><i style="width:60%"></i></div><span class="score-val">3/5</span></div></td>
+        </tr>
+      </tbody>
+      <caption>Independent scores from the game-critic agent's written report, docs/reviews/2026-09-07-shepherd-king-game-eval.md — recorded before the fixes in §6.</caption>
+    </table>
+    <p>Verdict at the time: <span class="pill warn">SHIP WITH FOLLOW-UPS</span> — a real logic bug in the duel's outcome messaging, no keyboard path, incomplete <span class="mono" style="font-size:13px;">prefers-reduced-motion</span> coverage, and a canvas/resize desync.</p>
+  </section>
+
+  <section class="fadein">
+    <p class="sec-num">06 — ITERATION LOG</p>
+    <h2>What changed, in order</h2>
+    <ul class="timeline">
+      <li><span class="tag">Build</span><div class="body"><b>Initial game</b><span>Seven-chapter narrative, canvas slingshot duel, English only.</span></div></li>
+      <li><span class="tag">Localize</span><div class="body"><b>Korean support added</b><span>Full i18n dictionary with an in-game language toggle; Korean scripture lines written as original paraphrase, checked phrase-by-phrase against 개역개정 to confirm no verbatim copying.</span></div></li>
+      <li><span class="tag">Review</span><div class="body"><b>game-critic evaluation</b><span>Surfaced the outcome-messaging bug, missing keyboard path, partial reduced-motion coverage, a resize desync, and informal global state — see §5.</span></div></li>
+      <li><span class="tag">Fix</span><div class="body"><b>All five findings addressed</b><span>Distinct hit/exhausted outcomes, resize-safe canvas fit, full keyboard aiming, reduced-motion coverage extended to the starfield and duel loop, animation-frame cleanup on scene change, and journey-log entries stored as resolvable keys instead of frozen text (fixing a mixed-language summary bug found along the way).</span></div></li>
+      <li><span class="tag">Expand</span><div class="body"><b>Parallel timelines added</b><span>A fourth, riskier choice in three scenes, each opening a short non-canon detour (§4) instead of a dead end.</span></div></li>
+      <li><span class="tag">Retest</span><div class="body"><b>Trajectory scaling corrected</b><span>Manual cross-width testing found the slingshot's reach formula under-powered at <em>every</em> tested width, not just large ones — replaced the guessed scaling constant with a closed-form minimum-launch-speed calculation derived from the live canvas geometry, tuned to a ~10–45° viable aiming window from 280px to 2000px wide.</span></div></li>
+    </ul>
+  </section>
+
+  <section class="fadein">
+    <p class="sec-num">07 — TECHNICAL NOTES</p>
+    <h2>How it's built</h2>
+    <div class="card-row">
+      <div class="card">
+        <h3>No dependencies</h3>
+        <p>One HTML file: inline CSS and vanilla JS in a single IIFE. No framework, no build step, no external libraries — the canvas duel is hand-rolled 2D physics.</p>
+      </div>
+      <div class="card">
+        <h3>Persistence</h3>
+        <p><span class="mono" style="font-size:13px;">localStorage</span> remembers the player's best duel result (fewest stones to a kill) and their chosen language across visits — no server, no account.</p>
+      </div>
+      <div class="card">
+        <h3>Theme</h3>
+        <p>Deliberately single-theme (night sky, bronze accent) rather than light/dark-adaptive — a stylistic choice matching the "shepherd under the stars" motif that runs through the source material.</p>
+      </div>
+      <div class="card">
+        <h3>Accessibility baseline</h3>
+        <p>Keyboard-operable throughout, <span class="mono" style="font-size:13px;">prefers-reduced-motion</span> respected, WCAG-AA-level contrast on the shipped palette, ARIA label on the one canvas-based control.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="doc-footer fadein">
+    THE SHEPHERD KING — PROJECT REPORT · PREPARED FROM THE DEVELOPMENT SESSION LOG · 2026-09-07
+  </footer>
+
+</div>

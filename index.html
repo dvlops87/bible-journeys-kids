@@ -1,0 +1,1054 @@
+<title>The Shepherd King</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..900&family=Literata:ital,wght@0,400;0,500;1,400&family=Noto+Serif+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --night-950:#0b0e1a;
+    --night-900:#12162a;
+    --night-800:#1c2340;
+    --night-700:#293158;
+    --parchment:#e9dfc4;
+    --parchment-dim:#a79f87;
+    --bronze:#caa257;
+    --bronze-bright:#f0c877;
+    --clay:#9a6a48;
+    --line: rgba(202,162,87,.22);
+    --shadow: rgba(0,0,0,.5);
+    --violet:#8d76c4;
+    --violet-line: rgba(141,118,196,.35);
+    color-scheme: dark;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background: var(--night-950);
+    color: var(--parchment);
+    font-family:'Literata', Georgia, 'Times New Roman', serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  html[lang="ko"] body{ font-family:'Noto Serif KR', 'Literata', Georgia, serif; }
+  h1,h2,h3,.display{
+    font-family:'Fraunces', Georgia, serif;
+    text-wrap:balance;
+    letter-spacing:.01em;
+  }
+  html[lang="ko"] h1, html[lang="ko"] h2, html[lang="ko"] h3, html[lang="ko"] .display{
+    font-family:'Noto Serif KR', 'Fraunces', Georgia, serif;
+  }
+  .mono{
+    font-family:'IBM Plex Mono', ui-monospace, monospace;
+    font-variant-numeric:tabular-nums;
+  }
+  a{color:var(--bronze-bright);}
+
+  /* ---- starfield backdrop ---- */
+  #sky{
+    position:fixed; inset:0; z-index:-2;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, var(--night-700) 0%, transparent 60%),
+      linear-gradient(180deg, var(--night-950) 0%, var(--night-900) 55%, var(--night-800) 100%);
+  }
+  #stars{position:fixed; inset:0; z-index:-1; pointer-events:none;}
+  #horizon-glow{
+    position:fixed; left:0; right:0; bottom:0; height:38vh; z-index:-1; pointer-events:none;
+    background: radial-gradient(ellipse 60% 100% at 50% 100%, rgba(202,162,87,.10), transparent 70%);
+  }
+
+  /* ---- shell ---- */
+  #app{
+    max-width:760px; margin:0 auto;
+    min-height:100vh;
+    display:flex; flex-direction:column;
+    padding: 0 22px;
+  }
+
+  header{
+    position:sticky; top:0; z-index:5;
+    display:flex; align-items:center; justify-content:space-between;
+    gap:16px;
+    padding:16px 0 12px;
+    background:linear-gradient(180deg, var(--night-950) 70%, transparent);
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-size:13px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--parchment-dim);
+  }
+  html[lang="ko"] .brand{ letter-spacing:.04em; text-transform:none; }
+  .brand svg{flex:none;}
+  .header-right{display:flex; align-items:center; gap:14px;}
+  #chapter-tag{font-size:12px; color:var(--bronze); letter-spacing:.08em;}
+  #lang-toggle{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:.06em;
+    color:var(--bronze-bright); background:transparent; border:1px solid var(--line);
+    border-radius:3px; padding:6px 10px; cursor:pointer; text-transform:uppercase;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  #lang-toggle:hover{border-color:var(--bronze); background:var(--night-800);}
+  #lang-toggle:focus-visible{outline:2px solid var(--bronze-bright); outline-offset:2px;}
+  #progress-track{
+    position:relative; height:3px; border-radius:2px;
+    background:var(--night-700); overflow:hidden; margin-top:10px;
+  }
+  #progress-fill{
+    position:absolute; inset:0 auto 0 0; width:0%;
+    background:linear-gradient(90deg, var(--clay), var(--bronze-bright));
+    transition:width .5s ease;
+  }
+
+  main{flex:1; display:flex; flex-direction:column; justify-content:center; padding:28px 0 48px;}
+
+  .scene{animation: rise .5s ease both;}
+  @keyframes rise{ from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:none;} }
+  @media (prefers-reduced-motion: reduce){ .scene{animation:none;} }
+
+  .icon-row{display:flex; align-items:center; gap:14px; margin-bottom:6px;}
+  .eyebrow{
+    font-size:12px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--bronze); margin:0;
+  }
+  html[lang="ko"] .eyebrow{ letter-spacing:.02em; text-transform:none; font-size:13px; }
+  .scene h2{
+    font-size:clamp(28px,4.6vw,42px); font-weight:600; margin:6px 0 18px; color:var(--parchment);
+  }
+  .scene p{
+    font-size:17px; line-height:1.65; max-width:64ch; color:var(--parchment);
+    margin:0 0 14px;
+  }
+  html[lang="ko"] .scene p{ font-size:16.5px; line-height:1.85; word-break:keep-all; }
+  .verse{
+    font-style:italic; color:var(--parchment-dim); border-left:2px solid var(--line);
+    padding-left:14px; margin:20px 0; font-size:15.5px; line-height:1.6;
+  }
+  html[lang="ko"] .verse{ font-style:normal; line-height:1.8; word-break:keep-all; }
+  .flavor{
+    margin-top:16px; padding:14px 16px; border:1px solid var(--line); border-radius:4px;
+    background:rgba(202,162,87,.05); color:var(--parchment-dim); font-size:15px;
+  }
+
+  .choices{display:flex; flex-direction:column; gap:10px; margin-top:26px;}
+  .choice-btn{
+    text-align:left; font-family:'Literata',serif; font-size:15.5px;
+    color:var(--parchment); background:var(--night-900);
+    border:1px solid var(--line); border-radius:4px;
+    padding:14px 16px; cursor:pointer; line-height:1.4;
+    transition:border-color .15s ease, background .15s ease, transform .1s ease;
+  }
+  html[lang="ko"] .choice-btn{ font-family:'Noto Serif KR','Literata',serif; word-break:keep-all; line-height:1.6; }
+  .choice-btn:hover{border-color:var(--bronze); background:var(--night-800);}
+  .choice-btn:active{transform:scale(.995);}
+  .choice-btn:focus-visible{outline:2px solid var(--bronze-bright); outline-offset:2px;}
+  .choice-btn .k{color:var(--bronze); font-family:'IBM Plex Mono',monospace; font-size:12px; margin-right:8px;}
+  .choice-btn.risk{border-color:var(--violet-line);}
+  .choice-btn.risk:hover{border-color:var(--violet); background:var(--night-800);}
+  .choice-btn.risk .k{color:var(--violet);}
+
+  /* ---- parallel-timeline branch ---- */
+  .parallel-scene{
+    border-left:2px solid var(--violet-line); padding-left:20px; margin-left:-2px;
+  }
+  .parallel-scene .eyebrow{color:var(--violet);}
+  .parallel-scene h2{color:var(--parchment);}
+
+  .cta-row{display:flex; gap:12px; margin-top:28px; flex-wrap:wrap;}
+  .btn{
+    font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.06em; text-transform:uppercase;
+    padding:13px 22px; border-radius:3px; cursor:pointer; border:1px solid var(--bronze);
+    background:transparent; color:var(--bronze-bright);
+    transition:background .15s ease, color .15s ease;
+  }
+  html[lang="ko"] .btn{ letter-spacing:.02em; text-transform:none; font-family:'Noto Serif KR','IBM Plex Mono',monospace; }
+  .btn:hover{background:var(--bronze); color:var(--night-950);}
+  .btn.primary{background:var(--bronze); color:var(--night-950);}
+  .btn.primary:hover{background:var(--bronze-bright); border-color:var(--bronze-bright);}
+  .btn:focus-visible{outline:2px solid var(--bronze-bright); outline-offset:2px;}
+
+  /* ---- title screen ---- */
+  .title-screen{text-align:left;}
+  .title-screen .display{
+    font-size:clamp(40px,9vw,84px); font-weight:800; line-height:.98; margin:10px 0 4px;
+  }
+  .title-sub{color:var(--parchment-dim); font-size:16px; max-width:52ch; margin:0 0 8px;}
+  html[lang="ko"] .title-sub{ word-break:keep-all; line-height:1.75; }
+  .record{
+    margin-top:22px; font-size:13px; color:var(--bronze); font-family:'IBM Plex Mono',monospace;
+  }
+  html[lang="ko"] .record{ font-family:'Noto Serif KR','IBM Plex Mono',monospace; }
+
+  /* ---- duel / canvas scene ---- */
+  .duel-wrap{position:relative; margin-top:10px;}
+  #duel-canvas{
+    width:100%; height:340px; display:block; border-radius:4px;
+    border:1px solid var(--line); touch-action:none; cursor:crosshair;
+    background:var(--night-900);
+  }
+  #duel-canvas:focus-visible{outline:2px solid var(--bronze-bright); outline-offset:3px;}
+  .duel-hud{
+    display:flex; justify-content:space-between; align-items:center;
+    margin-top:10px; font-family:'IBM Plex Mono',monospace; font-size:12px;
+    color:var(--parchment-dim); letter-spacing:.04em;
+  }
+  html[lang="ko"] .duel-hud{ font-family:'Noto Serif KR','IBM Plex Mono',monospace; }
+  .stones{display:flex; gap:6px;}
+  .stone-dot{width:9px; height:9px; border-radius:50%; background:var(--night-700); border:1px solid var(--line);}
+  .stone-dot.used{background:transparent; border-color:var(--parchment-dim); opacity:.35;}
+  .stone-dot.active{background:var(--bronze-bright); border-color:var(--bronze-bright);}
+  .duel-msg{
+    min-height:22px; margin-top:12px; font-size:15px; color:var(--parchment); font-style:italic;
+  }
+  html[lang="ko"] .duel-msg{ font-style:normal; word-break:keep-all; }
+
+  /* ---- journey summary ---- */
+  .journey{list-style:none; margin:18px 0; padding:0; display:flex; flex-direction:column; gap:8px;}
+  .journey li{
+    display:flex; gap:10px; font-size:14.5px; color:var(--parchment-dim);
+    border-bottom:1px dashed var(--line); padding-bottom:8px;
+  }
+  html[lang="ko"] .journey li{ word-break:keep-all; }
+  .journey li span.tag{
+    flex:none; width:96px; color:var(--bronze); font-family:'IBM Plex Mono',monospace; font-size:11px;
+    letter-spacing:.06em; text-transform:uppercase; padding-top:2px;
+  }
+  html[lang="ko"] .journey li span.tag{ width:88px; text-transform:none; font-family:'Noto Serif KR','IBM Plex Mono',monospace; }
+
+  footer{
+    text-align:left; padding:18px 0 30px; color:var(--parchment-dim); font-size:12px;
+    border-top:1px solid var(--line);
+  }
+</style>
+
+<div id="sky"></div>
+<canvas id="stars"></canvas>
+<div id="horizon-glow"></div>
+
+<div id="app">
+  <header>
+    <div class="brand">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" style="color:var(--bronze)"><path d="M4 18c2-6 4-9 8-9s6 3 8 9" /><circle cx="12" cy="6" r="2.4"/></svg>
+      <span id="brand-label">The Shepherd King</span>
+    </div>
+    <div class="header-right">
+      <div id="chapter-tag" class="mono">CH. 01 / 07</div>
+      <button id="lang-toggle" type="button" aria-label="Switch language">한국어</button>
+    </div>
+  </header>
+  <div id="progress-track"><div id="progress-fill"></div></div>
+
+  <main id="stage"></main>
+
+  <footer id="site-footer">1 Samuel 16–18 · a shepherd's story, told in seven scenes</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- i18n ---------- */
+  var LANG_KEY = 'shepherd-king-lang';
+  var LANG = localStorage.getItem(LANG_KEY) || 'en';
+
+  var STR = {
+    en: {
+      brand: 'The Shepherd King',
+      footer: '1 Samuel 16–18 · a shepherd’s story, told in seven scenes',
+      langToggleLabel: '한국어',
+      chapterTags: ['PROLOGUE','CH. 01 / 07','CH. 02 / 07','CH. 03 / 07','CH. 04 / 07','CH. 05 / 07','CH. 06 / 07'],
+      parallelLabel: 'Parallel Timeline',
+      parallelReturn: 'Return to that moment',
+      parallel: {
+        hills: {
+          h2: 'The Shepherd Who Ran',
+          p1: 'In this telling, David turns and bolts at the sound in the dark, leaving the flock to whatever is out there. Three sheep are gone by morning. Word of the boy who ran reaches Bethlehem before Samuel does — and it is not the story that gets a shepherd noticed by a prophet. ⚠️ An imagined fork, not the account in Scripture.'
+        },
+        harp: {
+          h2: 'Silenced Strings',
+          p1: 'In this telling, David sets the lyre down and answers Saul’s rage with words of his own. The guards have him out of the hall before the torches are relit. No one sends for a shepherd boy again — and the valley of Elah, when its day comes, is left to older, more cautious men. ⚠️ An imagined fork, not the account in Scripture.'
+        },
+        valley: {
+          h2: 'The Borrowed Armor',
+          p1: 'In this telling, David accepts Saul’s bronze. He cannot walk in it, let alone run — and he turns back before he ever reaches the brook for stones. Goliath’s taunt echoes through the camp for a forty-first day, and a forty-second. ⚠️ An imagined fork, not the account in Scripture.'
+        }
+      },
+      title: {
+        eyebrow: 'Bethlehem, c. 1020 BC',
+        display: 'David',
+        sub: 'A shepherd boy, a giant in the valley, and the five stones between them. Live the story of 1 Samuel 16–18, one choice at a time.',
+        recordPrefix: 'Your record: felled Goliath with stone ',
+        recordSuffix: ' of 5',
+        start: 'Begin the story'
+      },
+      hills: {
+        eyebrow: 'The Hills of Bethlehem',
+        h2: 'Keeper of the Flock',
+        p1: 'Before the crown, there is the crook. David is the youngest of Jesse’s eight sons, left with the sheep while his brothers are counted among men. Night falls over the pasture, and out of the dark comes a low growl — a lion, and once, a bear, each testing the flock at its edges.',
+        verse: 'Thy servant slew both the lion and the bear… this uncircumcised Philistine shall be as one of them.',
+        verseRef: '— 1 Samuel 17:36',
+        choiceA: 'Stand between the flock and the beast, staff raised.',
+        choiceB: 'Loose a stone from the sling before it ever reaches the sheep.',
+        choiceRisky: 'Turn and run — let the flock fend for itself.',
+        journeyA: 'Met the beast staff-first, hand to hand.',
+        journeyB: 'Trusted the sling before the beast drew close.',
+        tag: 'Bethlehem'
+      },
+      anoint: {
+        eyebrow: 'The House of Jesse',
+        h2: 'The Horn of Oil',
+        p1: 'The prophet Samuel comes to Bethlehem at the LORD’s word, and Jesse parades seven sons before him. Eliab is tall; Samuel is nearly certain. But none of the seven is chosen. “Are here all thy children?” Samuel asks. There remains the youngest, still with the sheep.',
+        verse: 'Man looketh on the outward appearance, but the LORD looketh on the heart.',
+        verseRef: '— 1 Samuel 16:7',
+        p2: 'David is sent for, and stands dust-covered before the horn of oil. Samuel anoints him in the midst of his brothers — and says nothing more.',
+        next: 'The oil runs down →',
+        journey: 'Anointed quietly, told to return to the flock.',
+        tag: 'Bethlehem'
+      },
+      harp: {
+        eyebrow: 'The Court of Saul',
+        h2: 'Strings Against the Storm',
+        p1: 'King Saul is troubled — an evil spirit presses on him, and his servants know of a shepherd who plays the lyre well. David is sent for, and made an armor-bearer, and each time the darkness comes over the king, David takes up the strings.',
+        prompt: 'Choose which line to play into the silence of the hall.',
+        choice1: '“The LORD is my shepherd; I shall not want.”',
+        choice2: '“The heavens declare the glory of God.”',
+        choice3: '“Yea, though I walk through the valley of the shadow.”',
+        choiceRisky: 'Set the lyre down and answer the king’s rage with your own.',
+        msg1: 'Saul’s shoulders ease. The room breathes again.',
+        msg2: 'For a moment, even the king looks up toward the window.',
+        msg3: 'Saul says nothing — but the spear stays on the wall tonight.',
+        journeyPrefix: 'Played: ',
+        tag: 'Saul’s hall'
+      },
+      valley: {
+        eyebrow: 'The Valley of Elah',
+        h2: 'Forty Days of Taunts',
+        p1: 'Twice a day for forty days, a champion of Gath named Goliath has stood in the valley between two armies and dared Israel to send a man against him. He stands six cubits and a span — over nine feet — in five thousand shekels of bronze mail.',
+        p2: 'David arrives with bread and cheese for his brothers, and hears the challenge for himself: “Who is this uncircumcised Philistine, that he should defy the armies of the living God?”',
+        p3: 'Saul offers his own armor. It is too large, too strange, and slows the boy’s stride.',
+        choiceA: 'Set the bronze armor aside. Take only the staff, the sling, and five smooth stones from the brook.',
+        choiceRisky: 'Accept Saul’s armor and helmet.',
+        journey: 'Refused Saul’s armor — staff, sling, five stones.',
+        tag: 'Valley of Elah'
+      },
+      duel: {
+        eyebrow: 'The Duel',
+        h2: 'Five Stones from the Brook',
+        p1: 'Goliath moves toward you, cursing you by his gods. Draw back the sling from its rest and let go to loose a stone. A strike to the forehead ends this — anywhere else, the bronze holds.',
+        dragHint: 'DRAG TO AIM · OR ARROW KEYS + ENTER',
+        powerLabel: 'POWER ',
+        stoneAway: 'STONE AWAY',
+        ariaLabel: 'Slingshot duel. Drag the stone and release to throw, or focus this area and use the arrow keys to aim, then Enter or Space to throw.',
+        initialMsg: 'He drew near, and David ran toward the army to meet him.',
+        missMsg: 'Wide of the mark. He steps closer, cursing you by his gods.',
+        glanceMsg: 'The stone glances off his mail. He laughs, and comes on.',
+        hitMsg: 'The stone sinks into his forehead. Goliath falls upon his face to the earth.',
+        exhaustedMsg: 'The fifth stone leaves your hand. It is not the clean strike the songs will tell — but the giant staggers all the same, and falls.',
+        journeyOne: 'One stone. One shepherd. One victory.',
+        journeyMultiPrefix: 'Felled the giant on stone ',
+        journeyMultiSuffix: ' of 5.',
+        journeyExhausted: 'Every stone was spent before the killing blow landed — yet somehow, the giant still fell.',
+        tag: 'The Duel'
+      },
+      end: {
+        eyebrow: 'The Valley, After',
+        h2: 'His Ten Thousands',
+        p1: 'David runs to the fallen giant, draws Goliath’s own sword, and the Philistine army breaks and flees. He carries the giant’s head to Jerusalem, and when the armies return, the women of Israel come out singing:',
+        verse: 'Saul hath slain his thousands, and David his ten thousands.',
+        verseRef: '— 1 Samuel 18:7',
+        p2: 'It is not the last valley he will walk — there is Saul’s jealousy still to survive, years as a fugitive in the wilderness, and, long after, a throne. But it begins here: a boy who trusted a sling before a sword.',
+        journeyHeading: 'Your journey',
+        again: 'Walk the valley again'
+      }
+    },
+    ko: {
+      brand: '목자 왕',
+      footer: '사무엘상 16–18장 · 일곱 장면으로 만나는 목동의 이야기',
+      langToggleLabel: 'English',
+      chapterTags: ['서장','1장 / 7장','2장 / 7장','3장 / 7장','4장 / 7장','5장 / 7장','6장 / 7장'],
+      parallelLabel: '평행세계',
+      parallelReturn: '그 순간으로 돌아가기',
+      parallel: {
+        hills: {
+          h2: '도망친 목동',
+          p1: '이 갈래에서 다윗은 어둠 속 소리에 몸을 돌려 달아나고, 양떼는 무엇이 있었는지도 모른 채 남겨집니다. 아침이 오자 양 세 마리가 사라졌습니다. 도망친 소년의 이야기는 사무엘이 오기도 전에 베들레헴에 먼저 퍼지고 — 그것은 예언자의 눈에 띌 만한 목동의 이야기가 아닙니다. ⚠️ 이것은 성경의 기록이 아닌, 상상으로 만든 갈림길입니다.'
+        },
+        harp: {
+          h2: '멎어버린 현악기',
+          p1: '이 갈래에서 다윗은 수금을 내려놓고 사울의 분노에 자신의 말로 맞섭니다. 횃불이 다시 켜지기도 전에 근위병들이 그를 궁정 밖으로 끌어냅니다. 다시는 아무도 목동 소년을 부르지 않고 — 엘라 골짜기의 그날이 오면, 그 자리는 더 나이 많고 신중한 이들의 몫이 됩니다. ⚠️ 이것은 성경의 기록이 아닌, 상상으로 만든 갈림길입니다.'
+        },
+        valley: {
+          h2: '빌려 입은 갑옷',
+          p1: '이 갈래에서 다윗은 사울의 놋 갑옷을 받아들입니다. 걷기조차 힘든데 하물며 달릴 수는 없습니다. 그는 돌을 주우러 시냇가에 이르기도 전에 발길을 돌립니다. 골리앗의 조롱은 마흔한 번째 날에도, 마흔두 번째 날에도 진영을 울립니다. ⚠️ 이것은 성경의 기록이 아닌, 상상으로 만든 갈림길입니다.'
+        }
+      },
+      title: {
+        eyebrow: '베들레헴, 기원전 약 1020년',
+        display: '다윗',
+        sub: '목동 소년과 골짜기의 거인, 그리고 그 사이에 놓인 다섯 개의 돌. 사무엘상 16장부터 18장까지의 이야기를 선택을 통해 직접 살아보세요.',
+        recordPrefix: '최고 기록: 다섯 개의 돌 중 ',
+        recordSuffix: '번째로 골리앗을 쓰러뜨림',
+        start: '이야기 시작하기'
+      },
+      hills: {
+        eyebrow: '베들레헴의 언덕',
+        h2: '양 떼를 지키는 자',
+        p1: '왕관보다 먼저 있었던 것은 목자의 지팡이였습니다. 다윗은 이새의 여덟 아들 중 막내로, 형들이 어른으로 인정받는 동안 홀로 양을 돌보았습니다. 밤이 내리면 어둠 속에서 낮은 울음소리가 들려옵니다 — 사자, 그리고 어느 날은 곰이 무리의 가장자리를 노립니다.',
+        verse: '주의 종이 사자와 곰을 물리쳤으니, 저 할례 받지 않은 블레셋 사람도 그들 중 하나와 같을 뿐입니다.',
+        verseRef: '— 사무엘상 17장 36절',
+        choiceA: '지팡이를 들고 짐승과 양 떼 사이에 선다.',
+        choiceB: '짐승이 양 떼에 이르기 전에 물맷돌을 던진다.',
+        choiceRisky: '몸을 돌려 달아난다 — 양 떼는 알아서 하게 둔다.',
+        journeyA: '지팡이를 들고 짐승과 정면으로 맞섰다.',
+        journeyB: '짐승이 가까이 오기 전에 물매를 믿고 던졌다.',
+        tag: '베들레헴'
+      },
+      anoint: {
+        eyebrow: '이새의 집',
+        h2: '기름이 담긴 뿔',
+        p1: '선지자 사무엘이 여호와의 말씀을 따라 베들레헴에 이르러, 이새는 일곱 아들을 그 앞에 세웁니다. 맏아들 엘리압은 키가 크고 늠름하여 사무엘은 거의 확신합니다. 그러나 일곱 중 누구도 택함을 받지 못합니다. “네 아들들이 다 여기 있느냐?” 사무엘이 묻자, 아직 양을 치고 있는 막내가 남아있음을 알게 됩니다.',
+        verse: '사람은 겉모습을 보지만, 나 여호와는 마음의 중심을 본다.',
+        verseRef: '— 사무엘상 16장 7절',
+        p2: '사람을 보내어 다윗을 불러오니, 흙먼지를 뒤집어쓴 채 기름이 담긴 뿔 앞에 섭니다. 사무엘은 형들이 보는 가운데 그에게 기름을 붓고, 더는 아무 말도 하지 않습니다.',
+        next: '기름이 흘러내리다 →',
+        journey: '조용히 기름부음을 받고, 다시 양 떼에게로 돌아갔다.',
+        tag: '베들레헴'
+      },
+      harp: {
+        eyebrow: '사울의 궁정',
+        h2: '폭풍 앞의 현악기',
+        p1: '사울 왕은 괴로워합니다 — 악한 영이 그를 짓누르고, 신하들은 수금을 잘 타는 한 목동을 알고 있습니다. 다윗이 불려와 병기 드는 자가 되고, 어둠이 왕을 덮칠 때마다 그는 현을 뜯습니다.',
+        prompt: '왕궁의 침묵 속에 어떤 노랫말을 들려줄지 선택하세요.',
+        choice1: '“여호와는 나의 목자시니, 내게 부족함이 없으리로다.”',
+        choice2: '“하늘이 하나님의 영광을 선포하는도다.”',
+        choice3: '“내가 사망의 음침한 골짜기로 다닐지라도.”',
+        choiceRisky: '수금을 내려놓고 왕의 분노에 맞서 말한다.',
+        msg1: '사울의 어깨에서 긴장이 풀립니다. 방 안에 다시 숨이 돌아옵니다.',
+        msg2: '잠시나마, 왕도 창 쪽으로 고개를 듭니다.',
+        msg3: '사울은 아무 말도 하지 않지만, 오늘 밤 창은 벽에 그대로 걸려 있습니다.',
+        journeyPrefix: '연주한 곡: ',
+        tag: '사울의 궁정'
+      },
+      valley: {
+        eyebrow: '엘라 골짜기',
+        h2: '사십 일간의 도발',
+        p1: '사십 일 동안 하루 두 번씩, 가드 사람 골리앗이라는 장수가 두 진영 사이 골짜기에 나와 이스라엘에게 자신과 싸울 사람을 보내라고 외쳤습니다. 그의 키는 여섯 규빗 한 뼘 — 거의 3미터에 이르며, 오천 세겔 무게의 놋 갑옷을 입고 있습니다.',
+        p2: '다윗은 형들에게 줄 떡과 치즈를 가지고 도착해, 그 도발을 직접 듣습니다. “이 할례받지 않은 블레셋 사람이 무엇이기에 살아 계신 하나님의 군대를 모욕하는가?”',
+        p3: '사울이 자신의 갑옷을 내어주지만, 너무 크고 낯설어 소년의 걸음을 무겁게 할 뿐입니다.',
+        choiceA: '놋 갑옷을 내려놓는다. 지팡이와 물매, 그리고 시냇가에서 고른 매끄러운 돌 다섯 개만을 챙긴다.',
+        choiceRisky: '사울의 갑옷과 투구를 받아들인다.',
+        journey: '사울의 갑옷을 사양하다 — 지팡이, 물매, 돌 다섯 개.',
+        tag: '엘라 골짜기'
+      },
+      duel: {
+        eyebrow: '결투',
+        h2: '시냇가에서 주운 다섯 개의 돌',
+        p1: '골리앗이 자신의 신들의 이름으로 저주하며 다가옵니다. 물매를 당겼다가 놓아 돌을 던지세요. 이마에 맞히면 승부가 끝나지만, 그 외의 부위는 갑옷이 막아냅니다.',
+        dragHint: '드래그로 조준 · 또는 방향키 + 엔터',
+        powerLabel: '힘 ',
+        stoneAway: '돌이 날아갑니다',
+        ariaLabel: '슬링샷 결투. 돌을 드래그했다가 놓아서 던지거나, 이 영역에 포커스한 뒤 방향키로 조준하고 엔터 또는 스페이스로 던지세요.',
+        initialMsg: '그가 가까이 다가오자, 다윗은 그 군대를 향해 달려나갔습니다.',
+        missMsg: '빗나갔습니다. 그가 저주하며 한 걸음 더 다가옵니다.',
+        glanceMsg: '돌이 갑옷에 맞고 튕겨 나갑니다. 그가 비웃으며 다가옵니다.',
+        hitMsg: '돌이 그의 이마에 박힙니다. 골리앗이 땅에 얼굴을 대고 쓰러집니다.',
+        exhaustedMsg: '다섯 번째 돌이 손을 떠납니다. 노래로 전해질 만큼 정확한 일격은 아니었지만, 거인은 그래도 비틀거리다 쓰러집니다.',
+        journeyOne: '돌 하나. 목동 하나. 승리 하나.',
+        journeyMultiPrefix: '다섯 개 중 ',
+        journeyMultiSuffix: '번째 돌로 거인을 쓰러뜨렸다.',
+        journeyExhausted: '결정적인 일격 전에 다섯 개의 돌을 모두 써버렸지만, 거인은 그래도 쓰러졌다.',
+        tag: '결투'
+      },
+      end: {
+        eyebrow: '골짜기, 그 이후',
+        h2: '그의 만만',
+        p1: '다윗은 쓰러진 거인에게 달려가 골리앗의 칼을 뽑아 그의 목을 베고, 블레셋 군대는 무너져 도망칩니다. 그는 거인의 머리를 예루살렘으로 가져가고, 군대가 돌아올 때 이스라엘 여인들이 노래하며 나옵니다:',
+        verse: '사울은 수천을 죽였고, 다윗은 수만을 죽였다네.',
+        verseRef: '— 사무엘상 18장 7절',
+        p2: '이것이 그가 지나야 할 마지막 골짜기는 아닙니다 — 사울의 질투를 견뎌내야 하고, 광야에서 도망자로 여러 해를 보내야 하며, 훗날에는 왕위가 기다립니다. 그러나 모든 것은 여기서 시작됩니다: 칼보다 먼저 물매를 믿었던 한 소년으로부터.',
+        journeyHeading: '당신의 여정',
+        again: '다시 골짜기를 걷기'
+      }
+    }
+  };
+
+  function t(){ return STR[LANG]; }
+
+  var PREFERS_REDUCED_MOTION = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+  /* ---------- starfield ---------- */
+  var starCanvas = document.getElementById('stars');
+  var sctx = starCanvas.getContext('2d');
+  var stars = [];
+  function seedStars(){
+    starCanvas.width = window.innerWidth;
+    starCanvas.height = window.innerHeight;
+    stars = [];
+    var n = Math.floor((starCanvas.width * starCanvas.height) / 9000);
+    for(var i=0;i<n;i++){
+      stars.push({
+        x: Math.random()*starCanvas.width,
+        y: Math.random()*starCanvas.height*0.75,
+        r: Math.random()*1.2 + 0.2,
+        a: Math.random()*0.6 + 0.25,
+        tw: Math.random()*0.02 + 0.005,
+        ph: Math.random()*Math.PI*2
+      });
+    }
+  }
+  function drawStars(tm){
+    sctx.clearRect(0,0,starCanvas.width, starCanvas.height);
+    for(var i=0;i<stars.length;i++){
+      var s = stars[i];
+      var a = PREFERS_REDUCED_MOTION ? s.a : s.a + Math.sin(tm*s.tw + s.ph)*0.2;
+      sctx.fillStyle = 'rgba(233,223,196,' + Math.max(0,a).toFixed(3) + ')';
+      sctx.beginPath();
+      sctx.arc(s.x, s.y, s.r, 0, Math.PI*2);
+      sctx.fill();
+    }
+    if(!PREFERS_REDUCED_MOTION){ requestAnimationFrame(drawStars); }
+  }
+  seedStars();
+  window.addEventListener('resize', function(){
+    seedStars();
+    if(PREFERS_REDUCED_MOTION){ drawStars(0); }
+  });
+  drawStars(0);
+
+  /* ---------- state ---------- */
+  var sceneIndex = 0;
+  var journey = [];
+  var stage = document.getElementById('stage');
+  var chapterTag = document.getElementById('chapter-tag');
+  var progressFill = document.getElementById('progress-fill');
+  var brandLabel = document.getElementById('brand-label');
+  var footerEl = document.getElementById('site-footer');
+  var langToggle = document.getElementById('lang-toggle');
+
+  var BEST_KEY = 'shepherd-king-best-stone';
+  var lastDuelResult = null;
+  var duelRafId = null;
+  var duelResizeHandler = null;
+
+  function cleanupDuel(){
+    if(duelRafId){ cancelAnimationFrame(duelRafId); duelRafId = null; }
+    if(duelResizeHandler){ window.removeEventListener('resize', duelResizeHandler); duelResizeHandler = null; }
+  }
+
+  function applyChrome(){
+    document.documentElement.setAttribute('lang', LANG);
+    brandLabel.textContent = t().brand;
+    footerEl.textContent = t().footer;
+    langToggle.textContent = t().langToggleLabel;
+    chapterTag.textContent = t().chapterTags[sceneIndex];
+  }
+
+  langToggle.addEventListener('click', function(){
+    LANG = (LANG === 'en') ? 'ko' : 'en';
+    localStorage.setItem(LANG_KEY, LANG);
+    applyChrome();
+    cleanupDuel();
+    render(scenes[sceneIndex].key);
+  });
+
+  function icon(name, size){
+    size = size || 20;
+    var icons = {
+      crook: '<path d="M4 19c2-7 4-11 9-11s6 3 6 6-2 4-4 4" /><circle cx="18" cy="6" r="2"/>',
+      horn: '<path d="M5 5c0 9 4 14 12 14M5 5c3 0 6 1 6 4M5 5c1 3 1 6 -1 8"/><circle cx="16" cy="18" r="1.4"/>',
+      lyre: '<path d="M6 20V9c0-3 2-5 6-5s6 2 6 5v11"/><path d="M6 20h2M10 20h2M14 20h2M18 20h2"/>',
+      sling: '<circle cx="12" cy="7" r="2.2"/><path d="M12 9v6M12 15l-5 5M12 15l5 5"/>',
+      crown: '<path d="M4 18h16l-1.4-8-4 3-2.6-5-2.6 5-4-3L4 18Z"/>',
+      star: '<path d="M12 3l2.2 5.6L20 10l-4.6 3.6L16.6 20 12 16.6 7.4 20l1.2-6.4L4 10l5.8-1.4L12 3Z"/>'
+    };
+    return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" style="color:var(--bronze)">'+icons[name]+'</svg>';
+  }
+
+  /* ---------- scene data ---------- */
+  var scenes = [
+    { key:'title' },
+    { key:'hills' },
+    { key:'anoint' },
+    { key:'harp' },
+    { key:'valley' },
+    { key:'duel' },
+    { key:'end' }
+  ];
+
+  function go(i){
+    cleanupDuel();
+    sceneIndex = i;
+    applyChrome();
+    progressFill.style.width = Math.round((i/(scenes.length-1))*100) + '%';
+    render(scenes[i].key);
+    window.scrollTo({top:0, behavior:'instant'});
+  }
+
+  /* Stores a scene key + a resolver run against that scene's *current-language*
+     strings at render time, so a mid-game language toggle never leaves the
+     journey summary mixing English and Korean lines. */
+  function choiceRecord(sceneKey, resolver){
+    journey.push({sceneKey:sceneKey, resolver:resolver});
+  }
+
+  /* Shows a short, clearly-marked "what if" detour when the player takes the
+     risky option in a decision scene, then lets them step back into the fork
+     and choose again — a dead branch, not a dead end. */
+  function showParallel(branchKey, backIndex){
+    cleanupDuel();
+    stage.innerHTML = '';
+    var el = document.createElement('div');
+    el.className = 'scene parallel-scene';
+    stage.appendChild(el);
+    var b = t().parallel[branchKey];
+    el.innerHTML =
+      '<div class="icon-row">'+icon('star')+'<p class="eyebrow">'+t().parallelLabel+'</p></div>' +
+      '<h2>'+b.h2+'</h2>' +
+      '<p>'+b.p1+'</p>' +
+      '<div class="cta-row"><button class="btn" id="return-btn">'+t().parallelReturn+'</button></div>';
+    el.querySelector('#return-btn').addEventListener('click', function(){ go(backIndex); });
+    window.scrollTo({top:0, behavior:'instant'});
+  }
+
+  /* ---------- renderers ---------- */
+  function render(key){
+    stage.innerHTML = '';
+    var el = document.createElement('div');
+    el.className = 'scene';
+    stage.appendChild(el);
+
+    if(key==='title') renderTitle(el);
+    if(key==='hills') renderHills(el);
+    if(key==='anoint') renderAnoint(el);
+    if(key==='harp') renderHarp(el);
+    if(key==='valley') renderValley(el);
+    if(key==='duel') renderDuel(el);
+    if(key==='end') renderEnd(el);
+  }
+
+  function renderTitle(el){
+    var s = t().title;
+    var best = localStorage.getItem(BEST_KEY);
+    el.innerHTML =
+      '<div class="title-screen">' +
+        '<p class="eyebrow">'+s.eyebrow+'</p>' +
+        '<h1 class="display">'+s.display+'</h1>' +
+        '<p class="title-sub">'+s.sub+'</p>' +
+        (best ? '<p class="record">'+s.recordPrefix+best+s.recordSuffix+'</p>' : '') +
+        '<div class="cta-row"><button class="btn primary" id="start-btn">'+s.start+'</button></div>' +
+      '</div>';
+    el.querySelector('#start-btn').addEventListener('click', function(){ go(1); });
+  }
+
+  function renderHills(el){
+    var s = t().hills;
+    el.innerHTML =
+      '<div class="icon-row">'+icon('crook')+'<p class="eyebrow">'+s.eyebrow+'</p></div>' +
+      '<h2>'+s.h2+'</h2>' +
+      '<p>'+s.p1+'</p>' +
+      '<p class="verse">'+s.verse+'<br>'+s.verseRef+'</p>' +
+      '<div class="choices">' +
+        '<button class="choice-btn"><span class="k">A</span>'+s.choiceA+'</button>' +
+        '<button class="choice-btn"><span class="k">B</span>'+s.choiceB+'</button>' +
+        '<button class="choice-btn risk"><span class="k">C</span>'+s.choiceRisky+'</button>' +
+      '</div>';
+    var btns = el.querySelectorAll('.choice-btn');
+    btns[0].addEventListener('click', function(){
+      choiceRecord('hills', function(strs){ return strs.journeyA; });
+      go(2);
+    });
+    btns[1].addEventListener('click', function(){
+      choiceRecord('hills', function(strs){ return strs.journeyB; });
+      go(2);
+    });
+    btns[2].addEventListener('click', function(){ showParallel('hills', 1); });
+  }
+
+  function renderAnoint(el){
+    var s = t().anoint;
+    el.innerHTML =
+      '<div class="icon-row">'+icon('horn')+'<p class="eyebrow">'+s.eyebrow+'</p></div>' +
+      '<h2>'+s.h2+'</h2>' +
+      '<p>'+s.p1+'</p>' +
+      '<p class="verse">'+s.verse+'<br>'+s.verseRef+'</p>' +
+      '<p>'+s.p2+'</p>' +
+      '<div class="cta-row"><button class="btn primary" id="next-btn">'+s.next+'</button></div>';
+    el.querySelector('#next-btn').addEventListener('click', function(){
+      choiceRecord('anoint', function(strs){ return strs.journey; });
+      go(3);
+    });
+  }
+
+  function renderHarp(el){
+    var s = t().harp;
+    el.innerHTML =
+      '<div class="icon-row">'+icon('lyre')+'<p class="eyebrow">'+s.eyebrow+'</p></div>' +
+      '<h2>'+s.h2+'</h2>' +
+      '<p>'+s.p1+'</p>' +
+      '<p>'+s.prompt+'</p>' +
+      '<div class="choices">' +
+        '<button class="choice-btn"><span class="k">1</span>'+s.choice1+'</button>' +
+        '<button class="choice-btn"><span class="k">2</span>'+s.choice2+'</button>' +
+        '<button class="choice-btn"><span class="k">3</span>'+s.choice3+'</button>' +
+        '<button class="choice-btn risk"><span class="k">4</span>'+s.choiceRisky+'</button>' +
+      '</div>' +
+      '<p class="duel-msg" id="harp-msg"></p>';
+    var msgs = [s.msg1, s.msg2, s.msg3];
+    var btns = el.querySelectorAll('.choice-btn');
+    var msgEl = el.querySelector('#harp-msg');
+    for(var i=0;i<3;i++){
+      (function(i){
+        btns[i].addEventListener('click', function(){
+          msgEl.textContent = msgs[i];
+          for(var j=0;j<btns.length;j++) btns[j].disabled = true;
+          choiceRecord('harp', function(strs){
+            var currentLabels = [strs.choice1, strs.choice2, strs.choice3];
+            return strs.journeyPrefix + currentLabels[i];
+          });
+          setTimeout(function(){ go(4); }, 900);
+        });
+      })(i);
+    }
+    btns[3].addEventListener('click', function(){ showParallel('harp', 3); });
+  }
+
+  function renderValley(el){
+    var s = t().valley;
+    el.innerHTML =
+      '<div class="icon-row">'+icon('sling')+'<p class="eyebrow">'+s.eyebrow+'</p></div>' +
+      '<h2>'+s.h2+'</h2>' +
+      '<p>'+s.p1+'</p>' +
+      '<p>'+s.p2+'</p>' +
+      '<p>'+s.p3+'</p>' +
+      '<div class="choices">' +
+        '<button class="choice-btn"><span class="k">A</span>'+s.choiceA+'</button>' +
+        '<button class="choice-btn risk"><span class="k">B</span>'+s.choiceRisky+'</button>' +
+      '</div>';
+    var btns = el.querySelectorAll('.choice-btn');
+    btns[0].addEventListener('click', function(){
+      choiceRecord('valley', function(strs){ return strs.journey; });
+      go(5);
+    });
+    btns[1].addEventListener('click', function(){ showParallel('valley', 4); });
+  }
+
+  /* ---------- duel minigame ---------- */
+  function renderDuel(el){
+    var s = t().duel;
+    el.innerHTML =
+      '<div class="icon-row">'+icon('sling')+'<p class="eyebrow">'+s.eyebrow+'</p></div>' +
+      '<h2>'+s.h2+'</h2>' +
+      '<p>'+s.p1+'</p>' +
+      '<div class="duel-wrap">' +
+        '<canvas id="duel-canvas" width="1000" height="340" tabindex="0" aria-label="'+s.ariaLabel+'"></canvas>' +
+      '</div>' +
+      '<div class="duel-hud"><div class="stones" id="stone-pips"></div><div id="power-readout" class="mono">'+s.dragHint+'</div></div>' +
+      '<p class="duel-msg" id="duel-msg">'+s.initialMsg+'</p>';
+
+    var canvas = el.querySelector('#duel-canvas');
+    var ctx = canvas.getContext('2d');
+    var pipsEl = el.querySelector('#stone-pips');
+    var powerEl = el.querySelector('#power-readout');
+    var msgEl = el.querySelector('#duel-msg');
+
+    // Every visual size (Goliath, the sling, the stone) stays fixed pixels
+    // regardless of canvas width — only the THROW itself scales. `launchK` is
+    // solved for directly from the actual geometry each time the canvas is
+    // fit: given how far Goliath now sits from the sling (he's pinned to
+    // CW-150, so a wider canvas puts him further away) and how much higher
+    // his forehead sits than the launch point, this finds the minimum launch
+    // speed a projectile-motion throw needs at its best angle to reach him,
+    // then adds a margin so a well-aimed (not just perfectly-aimed) full pull
+    // gets there — at any canvas width, including one that changes later.
+    var GRAVITY = 0.32, LAUNCH_MARGIN = 1.25;
+    var CW, CH, launchK = 0.16;
+    var pivot = {x:70, y:0};
+    var restOffset = 30, bandAnchor = 14, maxD = 70;
+    function computeLaunchK(){
+      var D = (CW - 150) - pivot.x;            // horizontal distance, sling to Goliath
+      var launchY = (CH - 40) - restOffset;    // stone height at full pull-back
+      var targetY = (CH - 46) - 138;           // Goliath's forehead height
+      var H = launchY - targetY;               // how much higher the forehead sits
+      var bestSpeed2 = Infinity;
+      for(var a=5; a<=85; a+=0.25){
+        var rad = a*Math.PI/180, s = Math.sin(rad), c = Math.cos(rad);
+        var denom = D*s*c - H*c*c;
+        if(denom<=0) continue;                 // this angle can't reach the height at all
+        var speed2 = 0.5*GRAVITY*D*D/denom;
+        if(speed2 < bestSpeed2) bestSpeed2 = speed2;
+      }
+      var minSpeed = Math.sqrt(bestSpeed2);
+      return (minSpeed*LAUNCH_MARGIN)/maxD;
+    }
+    function fitCanvas(){
+      var rect = canvas.getBoundingClientRect();
+      CW = canvas.width = rect.width * 2;
+      CH = canvas.height = rect.height * 2;
+      ctx.setTransform(2,0,0,2,0,0);
+      CW = rect.width; CH = rect.height;
+      launchK = computeLaunchK();
+    }
+    fitCanvas();
+
+    duelResizeHandler = function(){ fitCanvas(); };
+    window.addEventListener('resize', duelResizeHandler);
+
+    var stonesTotal = 5, stonesUsed = 0, gameOver = false;
+    var dragging = false, dragPt = null;
+    var projectile = null; // {x,y,vx,vy}
+    var goliathHitFlash = 0;
+    var goliathTarget = null;
+    var canvasFocused = false;
+    var keyAim = { angle: 55, power: 55 }; // angle: degrees of pull above horizontal; power: 0-100
+    var t0 = performance.now();
+
+    function updatePips(){
+      pipsEl.innerHTML = '';
+      for(var i=0;i<stonesTotal;i++){
+        var d = document.createElement('div');
+        d.className = 'stone-dot' + (i < stonesUsed ? ' used' : (i===stonesUsed ? ' active' : ''));
+        pipsEl.appendChild(d);
+      }
+    }
+    updatePips();
+
+    function goliathPos(tm){
+      var baseX = CW - 150;
+      var sway = PREFERS_REDUCED_MOTION ? 0 : Math.sin(tm*0.0009) * 18;
+      var groundY = CH - 46;
+      return { x: baseX + sway, groundY: groundY };
+    }
+
+    // Where the sling sits when pulled back by (angle, power) via the keyboard —
+    // shares the same rest point and max-pull radius as a pointer drag.
+    function keyAimPoint(){
+      var rad = keyAim.angle * Math.PI/180;
+      var frac = keyAim.power/100;
+      return {
+        x: pivot.x - Math.cos(rad)*frac*maxD,
+        y: (pivot.y-restOffset) + Math.sin(rad)*frac*maxD
+      };
+    }
+
+    function drawBand(stoneX, stoneY, dashed){
+      ctx.strokeStyle = 'rgba(233,223,196,.5)'; ctx.lineWidth = 1.5;
+      if(dashed) ctx.setLineDash([4,4]);
+      ctx.beginPath(); ctx.moveTo(pivot.x-bandAnchor, pivot.y-restOffset); ctx.lineTo(stoneX,stoneY); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(pivot.x+bandAnchor, pivot.y-restOffset); ctx.lineTo(stoneX,stoneY); ctx.stroke();
+      if(dashed) ctx.setLineDash([]);
+    }
+
+    // Mirrors fireStone's actual physics (launchK, fixed gravity) so the dashed
+    // preview always lands where the real throw will.
+    function drawTrajectoryPreview(stoneX, stoneY){
+      var pdx = pivot.x - stoneX, pdy = (pivot.y-restOffset) - stoneY;
+      var px=stoneX, py=stoneY, ppvx=pdx*launchK, ppvy=pdy*launchK;
+      ctx.fillStyle = 'rgba(202,162,87,.5)';
+      for(var i=0;i<26;i++){
+        px+=ppvx; py+=ppvy; ppvy+=GRAVITY;
+        if(i%2===0) { ctx.beginPath(); ctx.arc(px,py,1.6,0,Math.PI*2); ctx.fill(); }
+        if(py>CH) break;
+      }
+    }
+
+    function drawScene(tm){
+      ctx.clearRect(0,0,CW,CH);
+      pivot.y = CH - 40;
+
+      var g = ctx.createLinearGradient(0,0,0,CH);
+      g.addColorStop(0,'#141a30'); g.addColorStop(1,'#1c2340');
+      ctx.fillStyle = g; ctx.fillRect(0,0,CW,CH);
+
+      ctx.fillStyle = '#0f1224';
+      ctx.beginPath();
+      ctx.moveTo(0,CH-70);
+      ctx.quadraticCurveTo(CW*0.3, CH-120, CW*0.55, CH-72);
+      ctx.quadraticCurveTo(CW*0.8, CH-40, CW, CH-64);
+      ctx.lineTo(CW,CH); ctx.lineTo(0,CH); ctx.closePath(); ctx.fill();
+
+      ctx.strokeStyle = 'rgba(202,162,87,.25)';
+      ctx.beginPath(); ctx.moveTo(0,CH-40); ctx.lineTo(CW,CH-40); ctx.stroke();
+
+      var gp = goliathPos(tm);
+      var gx = gp.x, groundY = gp.groundY;
+      var flashOn = goliathHitFlash > 0;
+      ctx.fillStyle = flashOn ? '#e6c17a' : '#3a3f5c';
+      ctx.fillRect(gx-16, groundY-120, 32, 90);
+      ctx.beginPath(); ctx.arc(gx, groundY-134, 17, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = flashOn ? '#f0c877' : '#8a6a35';
+      ctx.beginPath(); ctx.arc(gx, groundY-140, 14, Math.PI, 0); ctx.fill();
+      ctx.fillStyle = 'rgba(233,223,196,.5)';
+      ctx.beginPath(); ctx.arc(gx, groundY-138, 4.2, 0, Math.PI*2); ctx.fill();
+      if(goliathHitFlash>0) goliathHitFlash -= 1;
+
+      goliathTarget = {x:gx, y:groundY-138, forehead:4.2*1.6, body:{x:gx-18,y:groundY-120,w:36,h:92}};
+
+      ctx.strokeStyle = '#caa257'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(pivot.x, pivot.y+8); ctx.lineTo(pivot.x, pivot.y-restOffset); ctx.stroke();
+
+      var stoneX = pivot.x, stoneY = pivot.y - restOffset;
+      if(dragging && dragPt){
+        stoneX = pivot.x + (dragPt.x - pivot.x);
+        stoneY = (pivot.y-restOffset) + (dragPt.y - (pivot.y-restOffset));
+        var dx = stoneX-pivot.x, dy = stoneY-(pivot.y-restOffset);
+        var dist = Math.sqrt(dx*dx+dy*dy);
+        if(dist>maxD){ stoneX = pivot.x + dx/dist*maxD; stoneY = (pivot.y-restOffset)+dy/dist*maxD; }
+        drawBand(stoneX, stoneY, true);
+        drawTrajectoryPreview(stoneX, stoneY);
+      } else if(!projectile && canvasFocused){
+        var kp = keyAimPoint();
+        stoneX = kp.x; stoneY = kp.y;
+        drawBand(stoneX, stoneY, true);
+        drawTrajectoryPreview(stoneX, stoneY);
+      } else if(!projectile) {
+        drawBand(stoneX, stoneY, false);
+      }
+      if(!projectile){
+        ctx.fillStyle = '#caa257';
+        ctx.beginPath(); ctx.arc(stoneX, stoneY, 6, 0, Math.PI*2); ctx.fill();
+      }
+
+      if(projectile){
+        ctx.fillStyle = '#f0c877';
+        ctx.beginPath(); ctx.arc(projectile.x, projectile.y, 5.5, 0, Math.PI*2); ctx.fill();
+      }
+    }
+
+    function pointerToCanvas(e){
+      var rect = canvas.getBoundingClientRect();
+      var cx = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      var cy = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+      return {x:cx, y:cy};
+    }
+
+    function fireStone(stoneX, stoneY){
+      projectile = { x:stoneX, y:stoneY, vx:(pivot.x-stoneX)*launchK, vy:((pivot.y-restOffset)-stoneY)*launchK };
+      stonesUsed += 1;
+      updatePips();
+      powerEl.textContent = s.stoneAway;
+    }
+
+    canvas.addEventListener('pointerdown', function(e){
+      if(gameOver || projectile) return;
+      dragging = true; dragPt = pointerToCanvas(e);
+      canvas.setPointerCapture(e.pointerId);
+    });
+    canvas.addEventListener('pointermove', function(e){
+      if(!dragging) return;
+      dragPt = pointerToCanvas(e);
+      var dx = dragPt.x-pivot.x, dy = dragPt.y-(pivot.y-restOffset);
+      var dist = Math.min(maxD, Math.sqrt(dx*dx+dy*dy));
+      powerEl.textContent = s.powerLabel + Math.round((dist/maxD)*100) + '%';
+    });
+    canvas.addEventListener('pointerup', function(e){
+      if(!dragging) return;
+      dragging = false;
+      var dx = dragPt.x-pivot.x, dy = dragPt.y-(pivot.y-restOffset);
+      var dist = Math.sqrt(dx*dx+dy*dy);
+      if(dist < 8){ dragPt=null; powerEl.textContent=s.dragHint; return; }
+      if(dist>maxD){ dx = dx/dist*maxD; dy = dy/dist*maxD; }
+      var stoneX = pivot.x+dx, stoneY = (pivot.y-restOffset)+dy;
+      dragPt = null;
+      fireStone(stoneX, stoneY);
+    });
+
+    // Keyboard path: arrow keys adjust the same pull that a drag would set,
+    // Enter/Space releases it — the duel is fully playable without a pointer.
+    canvas.addEventListener('focus', function(){
+      canvasFocused = true;
+      if(!gameOver && !projectile) powerEl.textContent = s.powerLabel + keyAim.power + '%';
+    });
+    canvas.addEventListener('blur', function(){ canvasFocused = false; });
+    canvas.addEventListener('keydown', function(e){
+      if(gameOver || projectile || dragging) return;
+      if(e.key==='ArrowUp'){ keyAim.power = Math.min(100, keyAim.power+5); }
+      else if(e.key==='ArrowDown'){ keyAim.power = Math.max(10, keyAim.power-5); }
+      else if(e.key==='ArrowLeft'){ keyAim.angle = Math.min(80, keyAim.angle+3); }
+      else if(e.key==='ArrowRight'){ keyAim.angle = Math.max(15, keyAim.angle-3); }
+      else if(e.key===' ' || e.key==='Enter' || e.key==='Spacebar'){
+        var kp = keyAimPoint();
+        e.preventDefault();
+        fireStone(kp.x, kp.y);
+        return;
+      } else { return; }
+      e.preventDefault();
+      powerEl.textContent = s.powerLabel + keyAim.power + '%';
+    });
+
+    function endGame(hitStoneNumber, hit){
+      gameOver = true;
+      lastDuelResult = hitStoneNumber;
+      if(hit){
+        var best = localStorage.getItem(BEST_KEY);
+        if(!best || hitStoneNumber < parseInt(best,10)){
+          localStorage.setItem(BEST_KEY, String(hitStoneNumber));
+        }
+      }
+      choiceRecord('duel', function(strs){
+        if(hit && hitStoneNumber<=1) return strs.journeyOne;
+        if(hit) return strs.journeyMultiPrefix + hitStoneNumber + strs.journeyMultiSuffix;
+        return strs.journeyExhausted;
+      });
+      msgEl.textContent = hit ? s.hitMsg : s.exhaustedMsg;
+      setTimeout(function(){ go(6); }, 1600);
+    }
+
+    function tick(now){
+      var tm = now - t0;
+      if(projectile){
+        projectile.x += projectile.vx;
+        projectile.y += projectile.vy;
+        projectile.vy += GRAVITY;
+        var target = goliathTarget;
+        if(target){
+          var dxh = projectile.x-target.x, dyh = projectile.y-target.y;
+          if(Math.sqrt(dxh*dxh+dyh*dyh) < target.forehead+5){
+            goliathHitFlash = 14;
+            projectile = null;
+            endGame(stonesUsed, true);
+          } else if(projectile && target.body &&
+                    projectile.x>target.body.x && projectile.x<target.body.x+target.body.w &&
+                    projectile.y>target.body.y && projectile.y<target.body.y+target.body.h){
+            goliathHitFlash = 8;
+            projectile = null;
+            if(stonesUsed>=stonesTotal){ endGame(stonesTotal, false); }
+            else { msgEl.textContent = s.glanceMsg; powerEl.textContent = s.dragHint; }
+          } else if(projectile.y>CH || projectile.x>CW || projectile.x<0){
+            projectile = null;
+            if(stonesUsed>=stonesTotal){ endGame(stonesTotal, false); }
+            else { msgEl.textContent = s.missMsg; powerEl.textContent = s.dragHint; }
+          }
+        }
+      }
+      if(!gameOver){
+        drawScene(tm);
+        duelRafId = requestAnimationFrame(tick);
+      }
+    }
+    duelRafId = requestAnimationFrame(tick);
+  }
+
+  function renderEnd(el){
+    var s = t().end;
+    var list = journey.map(function(j){
+      var sceneStrs = t()[j.sceneKey];
+      return '<li><span class="tag">'+sceneStrs.tag+'</span>'+j.resolver(sceneStrs)+'</li>';
+    }).join('');
+    el.innerHTML =
+      '<div class="icon-row">'+icon('crown')+'<p class="eyebrow">'+s.eyebrow+'</p></div>' +
+      '<h2>'+s.h2+'</h2>' +
+      '<p>'+s.p1+'</p>' +
+      '<p class="verse">'+s.verse+'<br>'+s.verseRef+'</p>' +
+      '<p>'+s.p2+'</p>' +
+      '<h3 style="font-size:15px; color:var(--bronze); margin:28px 0 4px; text-transform:uppercase; letter-spacing:.1em;">'+s.journeyHeading+'</h3>' +
+      '<ul class="journey">' + list + '</ul>' +
+      '<div class="cta-row">' +
+        '<button class="btn primary" id="again-btn">'+s.again+'</button>' +
+      '</div>';
+    el.querySelector('#again-btn').addEventListener('click', function(){
+      journey = [];
+      lastDuelResult = null;
+      go(0);
+    });
+  }
+
+  go(0);
+})();
+</script>
