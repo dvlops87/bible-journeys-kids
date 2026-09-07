@@ -4,7 +4,7 @@ A bilingual (English/Korean) interactive retelling of two callings from Scriptur
 
 ## Play it live
 
-- 🎮 **[Play the game](https://dvlops87.github.io/bible-journeys-kids/)**
+- 🎮 **[Play the game](https://tinyurl.com/bible-journeys-kids)**
 - 📄 **[Read the project report](https://dvlops87.github.io/bible-journeys-kids/report.html)**
 
 Or browse the source:
