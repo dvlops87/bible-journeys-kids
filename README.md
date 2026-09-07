@@ -1,6 +1,13 @@
 # Two Journeys
 
-A bilingual (English/Korean) interactive retelling of two callings from Scripture — David (1 Samuel 16–18) and Moses (Exodus 2–14) — built as a single-file HTML/CSS/JS game. No build step, no dependencies.
+A bilingual (English/Korean) interactive retelling of two callings from Scripture — David (1 Samuel 16–18) and Moses (Exodus 2–14) — built as a single-file HTML/CSS/JS game. No build step, no dependencies. Written simply for young readers (grades 1–6).
+
+## Play it live
+
+- 🎮 **[Play the game](https://dvlops87.github.io/bible-journeys-kids/)**
+- 📄 **[Read the project report](https://dvlops87.github.io/bible-journeys-kids/report.html)**
+
+Or browse the source:
 
 - **[index.html](index.html)** — the game itself. Open directly in a browser, or serve via GitHub Pages.
 - **[report.html](report.html)** — a project report covering the original narrative design, duel physics, and quality review (written before the Moses track was added).
