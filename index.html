@@ -1,6 +1,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Shepherd King</title>
+<title>Two Journeys: David &amp; Moses</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..900&family=Literata:ital,wght@0,400;0,500;1,400&family=Noto+Serif+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
@@ -18,6 +18,8 @@
     --shadow: rgba(0,0,0,.5);
     --violet:#8d76c4;
     --violet-line: rgba(141,118,196,.35);
+    --teal:#5aa9a3;
+    --teal-line: rgba(90,169,163,.35);
     color-scheme: dark;
   }
   *{box-sizing:border-box;}
@@ -124,10 +126,6 @@
     padding-left:14px; margin:20px 0; font-size:15.5px; line-height:1.6;
   }
   html[lang="ko"] .verse{ font-style:normal; line-height:1.8; word-break:keep-all; }
-  .flavor{
-    margin-top:16px; padding:14px 16px; border:1px solid var(--line); border-radius:4px;
-    background:rgba(202,162,87,.05); color:var(--parchment-dim); font-size:15px;
-  }
 
   .choices{display:flex; flex-direction:column; gap:10px; margin-top:26px;}
   .choice-btn{
@@ -145,26 +143,32 @@
   .choice-btn.risk{border-color:var(--violet-line);}
   .choice-btn.risk:hover{border-color:var(--violet); background:var(--night-800);}
   .choice-btn.risk .k{color:var(--violet);}
+  .choice-btn.picked{border-color:var(--bronze-bright); background:var(--night-800); box-shadow:inset 0 0 0 1px var(--bronze-bright);}
+  .choice-btn.risk.picked{border-color:var(--violet); box-shadow:inset 0 0 0 1px var(--violet);}
 
   /* ---- parallel-timeline branch ---- */
-  .parallel-scene{
-    border-left:2px solid var(--violet-line); padding-left:20px; margin-left:-2px;
-  }
+  .parallel-scene{ border-left:2px solid var(--violet-line); padding-left:20px; margin-left:-2px; }
   .parallel-scene .eyebrow{color:var(--violet);}
-  .parallel-scene h2{color:var(--parchment);}
 
   .cta-row{display:flex; gap:12px; margin-top:28px; flex-wrap:wrap;}
+  [hidden]{display:none !important;}
   .btn{
     font-family:'IBM Plex Mono',monospace; font-size:13px; letter-spacing:.06em; text-transform:uppercase;
     padding:13px 22px; border-radius:3px; cursor:pointer; border:1px solid var(--bronze);
     background:transparent; color:var(--bronze-bright);
-    transition:background .15s ease, color .15s ease;
+    transition:background .15s ease, color .15s ease, opacity .15s ease;
   }
   html[lang="ko"] .btn{ letter-spacing:.02em; text-transform:none; font-family:'Noto Serif KR','IBM Plex Mono',monospace; }
   .btn:hover{background:var(--bronze); color:var(--night-950);}
   .btn.primary{background:var(--bronze); color:var(--night-950);}
   .btn.primary:hover{background:var(--bronze-bright); border-color:var(--bronze-bright);}
   .btn:focus-visible{outline:2px solid var(--bronze-bright); outline-offset:2px;}
+  .btn:disabled{opacity:.32; cursor:not-allowed; pointer-events:none;}
+  .btn.secondary{border-color:var(--line); color:var(--parchment-dim);}
+  .btn.secondary:hover{background:var(--night-800); color:var(--parchment); border-color:var(--parchment-dim);}
+
+  .reveal-msg{ min-height:22px; margin-top:16px; font-size:15px; color:var(--parchment); font-style:italic; }
+  html[lang="ko"] .reveal-msg{ font-style:normal; word-break:keep-all; }
 
   /* ---- title screen ---- */
   .title-screen{text-align:left;}
@@ -173,33 +177,45 @@
   }
   .title-sub{color:var(--parchment-dim); font-size:16px; max-width:52ch; margin:0 0 8px;}
   html[lang="ko"] .title-sub{ word-break:keep-all; line-height:1.75; }
-  .record{
-    margin-top:22px; font-size:13px; color:var(--bronze); font-family:'IBM Plex Mono',monospace;
-  }
+  .record{ margin-top:22px; font-size:13px; color:var(--bronze); font-family:'IBM Plex Mono',monospace; }
   html[lang="ko"] .record{ font-family:'Noto Serif KR','IBM Plex Mono',monospace; }
 
-  /* ---- duel / canvas scene ---- */
-  .duel-wrap{position:relative; margin-top:10px;}
-  #duel-canvas{
+  /* ---- character select ---- */
+  .select-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:28px; }
+  @media (max-width:600px){ .select-grid{ grid-template-columns:1fr; } }
+  .select-card{
+    text-align:left; width:100%; font-family:'Literata',serif;
+    background:var(--night-900); border:1px solid var(--line); border-radius:6px;
+    padding:20px; cursor:pointer; transition:border-color .15s ease, background .15s ease;
+  }
+  html[lang="ko"] .select-card{ font-family:'Noto Serif KR','Literata',serif; }
+  .select-card:hover{ border-color:var(--bronze); background:var(--night-800); }
+  .select-card.picked{ border-color:var(--bronze-bright); box-shadow:inset 0 0 0 1px var(--bronze-bright); }
+  .select-card:focus-visible{ outline:2px solid var(--bronze-bright); outline-offset:2px; }
+  .select-card h3{ font-family:'Fraunces',Georgia,serif; font-size:26px; margin:0 0 8px; color:var(--parchment); }
+  html[lang="ko"] .select-card h3{ font-family:'Noto Serif KR','Fraunces',serif; }
+  .select-card p{ font-size:14.5px; line-height:1.55; color:var(--parchment-dim); margin:0; word-break:keep-all; }
+
+  /* ---- minigame (duel / red sea) ---- */
+  .game-wrap{position:relative; margin-top:10px;}
+  .game-canvas-el{
     width:100%; height:340px; display:block; border-radius:4px;
     border:1px solid var(--line); touch-action:none; cursor:crosshair;
     background:var(--night-900);
   }
-  #duel-canvas:focus-visible{outline:2px solid var(--bronze-bright); outline-offset:3px;}
-  .duel-hud{
+  .game-canvas-el:focus-visible{outline:2px solid var(--bronze-bright); outline-offset:3px;}
+  .game-hud{
     display:flex; justify-content:space-between; align-items:center;
     margin-top:10px; font-family:'IBM Plex Mono',monospace; font-size:12px;
     color:var(--parchment-dim); letter-spacing:.04em;
   }
-  html[lang="ko"] .duel-hud{ font-family:'Noto Serif KR','IBM Plex Mono',monospace; }
+  html[lang="ko"] .game-hud{ font-family:'Noto Serif KR','IBM Plex Mono',monospace; }
   .stones{display:flex; gap:6px;}
   .stone-dot{width:9px; height:9px; border-radius:50%; background:var(--night-700); border:1px solid var(--line);}
   .stone-dot.used{background:transparent; border-color:var(--parchment-dim); opacity:.35;}
   .stone-dot.active{background:var(--bronze-bright); border-color:var(--bronze-bright);}
-  .duel-msg{
-    min-height:22px; margin-top:12px; font-size:15px; color:var(--parchment); font-style:italic;
-  }
-  html[lang="ko"] .duel-msg{ font-style:normal; word-break:keep-all; }
+  .meter-track{ width:140px; height:8px; border-radius:4px; background:var(--night-700); overflow:hidden; border:1px solid var(--line); }
+  .meter-fill{ height:100%; background:linear-gradient(90deg, var(--teal), var(--bronze-bright)); width:0%; }
 
   /* ---- journey summary ---- */
   .journey{list-style:none; margin:18px 0; padding:0; display:flex; flex-direction:column; gap:8px;}
@@ -228,10 +244,10 @@
   <header>
     <div class="brand">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" style="color:var(--bronze)"><path d="M4 18c2-6 4-9 8-9s6 3 8 9" /><circle cx="12" cy="6" r="2.4"/></svg>
-      <span id="brand-label">The Shepherd King</span>
+      <span id="brand-label">Two Journeys</span>
     </div>
     <div class="header-right">
-      <div id="chapter-tag" class="mono">CH. 01 / 07</div>
+      <div id="chapter-tag" class="mono"></div>
       <button id="lang-toggle" type="button" aria-label="Switch language">한국어</button>
     </div>
   </header>
@@ -239,7 +255,7 @@
 
   <main id="stage"></main>
 
-  <footer id="site-footer">1 Samuel 16–18 · a shepherd's story, told in seven scenes</footer>
+  <footer id="site-footer">Two callings from Scripture, chosen by you</footer>
 </div>
 
 <script>
@@ -252,9 +268,23 @@
 
   var STR = {
     en: {
+      langToggleLabel: '한국어',
+      nextLabel: 'Next',
+      chooseOtherLabel: 'Choose another journey',
+      select: {
+        brand: 'Two Journeys',
+        footer: 'Two callings from Scripture, chosen by you',
+        eyebrow: 'Scripture, in Two Lives',
+        h1: 'Two Journeys',
+        sub: 'Step into one of two callings — a shepherd boy who becomes a king, or a fugitive prince who becomes a deliverer. Choose where to begin.',
+        davidTitle: 'David',
+        davidBlurb: 'A shepherd’s rise from the hills of Bethlehem to the valley of Elah. 1 Samuel 16–18.',
+        mosesTitle: 'Moses',
+        mosesBlurb: 'Called at a burning bush to lead a nation out of bondage, and out across a parted sea. Exodus 2–14.',
+        start: 'Begin'
+      },
       brand: 'The Shepherd King',
       footer: '1 Samuel 16–18 · a shepherd’s story, told in seven scenes',
-      langToggleLabel: '한국어',
       chapterTags: ['PROLOGUE','CH. 01 / 07','CH. 02 / 07','CH. 03 / 07','CH. 04 / 07','CH. 05 / 07','CH. 06 / 07'],
       parallelLabel: 'Parallel Timeline',
       parallelReturn: 'Return to that moment',
@@ -270,6 +300,22 @@
         valley: {
           h2: 'The Borrowed Armor',
           p1: 'In this telling, David accepts Saul’s bronze. He cannot walk in it, let alone run — and he turns back before he ever reaches the brook for stones. Goliath’s taunt echoes through the camp for a forty-first day, and a forty-second. ⚠️ An imagined fork, not the account in Scripture.'
+        },
+        mBasket: {
+          h2: 'The Basket Swept Away',
+          p1: 'In this telling, the crying child startles the princess before Miriam can move. The basket is left among the reeds, and the river carries it on. No prince’s house raises a deliverer this generation — Egypt’s brickyards simply continue, one more winter, unremarked. ⚠️ An imagined fork, not the account in Scripture.'
+        },
+        mBush: {
+          h2: 'The Voice Goes Unanswered',
+          p1: 'In this telling, Moses turns back to his flock and does not return to the mountain. The bush burns down to ash by morning, and Midian keeps its shepherd. Somewhere in Egypt, the cry of a people goes up with no one yet sent to answer it. ⚠️ An imagined fork, not the account in Scripture.'
+        },
+        mPlagues: {
+          h2: 'A Warning Withheld',
+          p1: 'In this telling, Moses softens the word before Pharaoh’s court, careful not to give offense. Pharaoh smiles, thanks the shepherd for his concern, and does exactly as he always intended. The signs still come, but the warning that might have prepared a household for them never quite arrives. ⚠️ An imagined fork, not the account in Scripture.'
+        },
+        mPassover: {
+          h2: 'An Unmarked Door',
+          p1: 'In this telling, a household decides to wait and see whether the warning is real before staining their own doorposts. Word does not travel fast enough. ⚠️ An imagined fork, not the account in Scripture.'
         }
       },
       title: {
@@ -300,7 +346,6 @@
         verse: 'Man looketh on the outward appearance, but the LORD looketh on the heart.',
         verseRef: '— 1 Samuel 16:7',
         p2: 'David is sent for, and stands dust-covered before the horn of oil. Samuel anoints him in the midst of his brothers — and says nothing more.',
-        next: 'The oil runs down →',
         journey: 'Anointed quietly, told to return to the flock.',
         tag: 'Bethlehem'
       },
@@ -357,13 +402,122 @@
         verseRef: '— 1 Samuel 18:7',
         p2: 'It is not the last valley he will walk — there is Saul’s jealousy still to survive, years as a fugitive in the wilderness, and, long after, a throne. But it begins here: a boy who trusted a sling before a sword.',
         journeyHeading: 'Your journey',
-        again: 'Walk the valley again'
+        again: 'Walk the valley again',
+        chooseOther: 'Choose another journey'
+      },
+
+      mBrand: 'Out of Egypt',
+      mFooter: 'Exodus 2–14 · a deliverer’s story, told in seven scenes',
+      mChapterTags: ['PROLOGUE','CH. 01 / 07','CH. 02 / 07','CH. 03 / 07','CH. 04 / 07','CH. 05 / 07','CH. 06 / 07'],
+      mTitle: {
+        eyebrow: 'Egypt, c. 13th century BC',
+        display: 'Moses',
+        sub: 'A prince raised in Pharaoh’s house, a fugitive shepherd in Midian, and a nation waiting on the far side of the sea. Live the story of Exodus 2–14, one choice at a time.',
+        recordPrefix: 'Your record: crossed the sea with ',
+        recordSuffix: ' close calls',
+        start: 'Begin the story'
+      },
+      mBasket: {
+        eyebrow: 'The House of Levi',
+        h2: 'The Basket of Reeds',
+        p1: 'Pharaoh has ordered every Hebrew son thrown into the Nile. A Levite woman hides her newborn three months, then can hide him no longer — she seals a papyrus basket with tar and pitch and sets it afloat among the reeds at the river’s edge.',
+        verse: 'And when she could no longer hide him, she took for him an ark of bulrushes.',
+        verseRef: '— Exodus 2:3',
+        p2: 'His sister Miriam watches from a distance. Pharaoh’s own daughter comes down to bathe, finds the basket, and hears the child crying.',
+        choiceA: 'Miriam steps forward and offers to find a Hebrew nurse for the child.',
+        choiceB: 'Miriam stays hidden a moment longer, watching to see what the princess will do.',
+        choiceRisky: 'Cry out from the reeds to stop the princess from taking him.',
+        journeyA: 'Miriam spoke up — and their own mother nursed him, paid from Pharaoh’s house.',
+        journeyB: 'Miriam waited and watched before she moved.',
+        tag: 'The Nile'
+      },
+      mBush: {
+        eyebrow: 'Horeb, the Mountain of God',
+        h2: 'The Burning Bush',
+        p1: 'Decades later, Moses is a fugitive shepherd in Midian, having fled Egypt after killing a man who beat a Hebrew slave. At Horeb, he sees a bush ablaze but not consumed. A voice calls him by name out of the fire.',
+        verse: 'I AM THAT I AM: thus shalt thou say unto the children of Israel, I AM hath sent me unto you.',
+        verseRef: '— Exodus 3:14',
+        p2: 'God commissions him to return to Egypt and demand Pharaoh let His people go. Moses objects: he is slow of speech, a nobody, a man with no standing left in either country.',
+        choiceA: 'Accept the call, fear and all.',
+        choiceB: 'Ask for a sign before agreeing to go.',
+        choiceRisky: 'Refuse outright, and stay with the flock in Midian.',
+        journeyA: 'Said yes at the bush, fear and all.',
+        journeyB: 'Asked for a sign — and was given three.',
+        tag: 'Horeb'
+      },
+      mPlagues: {
+        eyebrow: 'Pharaoh’s Court',
+        h2: 'Let My People Go',
+        p1: 'Moses and Aaron stand before Pharaoh: “Thus saith the LORD God of Israel, Let my people go.” Pharaoh refuses, and the plagues begin — the Nile to blood, frogs, gnats, flies, blight on the cattle, boils, hail, locusts, darkness — each one answered by hardness where relief should have been.',
+        p2: 'Nine plagues come and go. Pharaoh’s own magicians can no longer keep pace. A tenth and final judgment is announced for the night to come.',
+        choiceA: 'Deliver the warning to Pharaoh plainly, one last time.',
+        choiceB: 'Let the sign speak for itself, and say little.',
+        choiceRisky: 'Soften the warning, to keep some peace with Pharaoh’s court.',
+        journeyA: 'Warned Pharaoh plainly, to his face, one last time.',
+        journeyB: 'Let each sign speak for itself.',
+        tag: 'Pharaoh’s Court'
+      },
+      mPassover: {
+        eyebrow: 'The Night of the Passover',
+        h2: 'The Passover Night',
+        p1: 'Every household is told to take a lamb without blemish, kill it at twilight, and strike its blood on the doorposts and the lintel — when the LORD passes through to strike Egypt’s firstborn, the blood will be a sign, and He will pass over that house.',
+        verse: 'When I see the blood, I will pass over you.',
+        verseRef: '— Exodus 12:13',
+        p2: 'At midnight there is not a house in Egypt without someone dead — except where the blood marks the door.',
+        choiceA: 'Mark the doorposts exactly as commanded, then wait inside until morning.',
+        choiceB: 'Gather the household to eat in haste, staff in hand, ready to leave.',
+        choiceRisky: 'Wait to see whether the warning is real before marking the door.',
+        journeyA: 'Marked the doorposts exactly as commanded.',
+        journeyB: 'Ate in haste, staff in hand, ready to go.',
+        tag: 'Goshen'
+      },
+      mRedsea: {
+        eyebrow: 'The Sea of Reeds',
+        h2: 'The Waters Stand Apart',
+        p1: 'Pharaoh’s chariots close in behind, the sea stands ahead, and the people are trapped between them. Moses stretches his hand out over the water, and a strong east wind drives the sea back all that night — but the wall of water on either side holds only as long as the hand stays raised.',
+        holdHint: 'PRESS AND HOLD TO AIM · OR HOLD SPACE / ENTER',
+        holding: 'HAND RAISED',
+        released: 'HAND DROPPING — RAISE IT AGAIN',
+        ariaLabel: 'Hold your hand up over the sea. Press and hold this area, or focus it and hold Space or Enter, to keep the waters parted while Israel crosses.',
+        initialMsg: 'The people cry out. Moses lifts his staff, and stretches his hand over the sea.',
+        wobbleMsg: 'The wall of water shudders — your arm is dropping.',
+        closeCallMsg: 'The water nearly closes. You raise your hand again just in time.',
+        successMsg: 'The last of the people reach the far bank. Moses stretches his hand out once more, and the sea returns to its place.',
+        journeyClean: 'Held the sea apart without a single close call.',
+        journeyCloseCallsPrefix: 'Crossed the sea with ',
+        journeyCloseCallsSuffix: ' close calls along the way.',
+        tag: 'The Sea of Reeds'
+      },
+      mEnd: {
+        eyebrow: 'The Far Bank',
+        h2: 'Song of the Sea',
+        p1: 'The waters return and cover Pharaoh’s chariots and his horsemen — of all the army that went in after them into the sea, not so much as one remains. On the far shore, Miriam takes up a timbrel, and all the women follow her, dancing:',
+        verse: 'Sing ye to the LORD, for he hath triumphed gloriously: the horse and his rider hath he thrown into the sea.',
+        verseRef: '— Exodus 15:21',
+        p2: 'It is not the last wilderness he will lead them through — there is bread and water still to ask for, a mountain of law still to climb, and forty years of wandering before the promised land. But it begins here: a fugitive shepherd who raised his hand, and did not lower it.',
+        journeyHeading: 'Your journey',
+        again: 'Cross the sea again',
+        chooseOther: 'Choose another journey'
       }
     },
     ko: {
+      langToggleLabel: 'English',
+      nextLabel: '다음',
+      chooseOtherLabel: '다른 이야기 선택하기',
+      select: {
+        brand: '두 개의 여정',
+        footer: '성경 속 두 개의 부르심, 당신이 고른 이야기',
+        eyebrow: '성경 속 두 개의 삶',
+        h1: '두 개의 여정',
+        sub: '두 개의 부르심 중 하나를 선택하세요 — 훗날 왕이 되는 목동 소년, 혹은 훗날 해방자가 되는 도망자 왕자. 어디서부터 시작할지 골라보세요.',
+        davidTitle: '다윗',
+        davidBlurb: '베들레헴 언덕의 목동에서 엘라 골짜기까지. 사무엘상 16–18장.',
+        mosesTitle: '모세',
+        mosesBlurb: '떨기나무 앞에서 부름받아 한 민족을 종살이에서, 그리고 갈라진 바다 건너로 이끌어낸 이야기. 출애굽기 2–14장.',
+        start: '시작하기'
+      },
       brand: '목자 왕',
       footer: '사무엘상 16–18장 · 일곱 장면으로 만나는 목동의 이야기',
-      langToggleLabel: 'English',
       chapterTags: ['서장','1장 / 7장','2장 / 7장','3장 / 7장','4장 / 7장','5장 / 7장','6장 / 7장'],
       parallelLabel: '평행세계',
       parallelReturn: '그 순간으로 돌아가기',
@@ -379,6 +533,22 @@
         valley: {
           h2: '빌려 입은 갑옷',
           p1: '이 갈래에서 다윗은 사울의 놋 갑옷을 받아들입니다. 걷기조차 힘든데 하물며 달릴 수는 없습니다. 그는 돌을 주우러 시냇가에 이르기도 전에 발길을 돌립니다. 골리앗의 조롱은 마흔한 번째 날에도, 마흔두 번째 날에도 진영을 울립니다. ⚠️ 이것은 성경의 기록이 아닌, 상상으로 만든 갈림길입니다.'
+        },
+        mBasket: {
+          h2: '떠내려간 바구니',
+          p1: '이 갈래에서는 미리암이 움직이기도 전에 울음소리가 공주를 놀라게 합니다. 바구니는 갈대 사이에 남겨지고, 강물이 그것을 계속 실어 나릅니다. 이 세대에는 왕궁에서 자라나는 해방자가 없습니다 — 이집트의 벽돌 가마는 그저 한 겨울을 더, 아무 일 없다는 듯 이어갈 뿐입니다. ⚠️ 이것은 성경의 기록이 아닌, 상상으로 만든 갈림길입니다.'
+        },
+        mBush: {
+          h2: '응답받지 못한 부름',
+          p1: '이 갈래에서 모세는 양떼에게로 돌아서고, 다시 산으로 오르지 않습니다. 떨기나무는 아침이 오기 전에 재로 사그라들고, 미디안은 그 목자를 그대로 붙듭니다. 이집트 어딘가에서 한 민족의 부르짖음이 올라가지만, 아직 그것에 응답하러 보내진 이는 없습니다. ⚠️ 이것은 성경의 기록이 아닌, 상상으로 만든 갈림길입니다.'
+        },
+        mPlagues: {
+          h2: '전해지지 않은 경고',
+          p1: '이 갈래에서 모세는 파라오의 궁정 앞에서 말을 부드럽게 다듬어, 심기를 거스르지 않으려 애씁니다. 파라오는 미소 지으며 그 목자의 배려에 감사하고, 처음부터 마음먹었던 대로 행합니다. 재앙은 여전히 찾아오지만, 사람들을 미리 대비시켰을 경고는 끝내 제때 전해지지 않습니다. ⚠️ 이것은 성경의 기록이 아닌, 상상으로 만든 갈림길입니다.'
+        },
+        mPassover: {
+          h2: '표시하지 않은 문',
+          p1: '이 갈래에서 한 가정은 자기 집 문설주에 피를 바르기 전에, 이 경고가 정말인지 좀 더 지켜보기로 합니다. 소식은 그들에게 제때 닿지 못합니다. ⚠️ 이것은 성경의 기록이 아닌, 상상으로 만든 갈림길입니다.'
         }
       },
       title: {
@@ -409,7 +579,6 @@
         verse: '사람은 겉모습을 보지만, 나 여호와는 마음의 중심을 본다.',
         verseRef: '— 사무엘상 16장 7절',
         p2: '사람을 보내어 다윗을 불러오니, 흙먼지를 뒤집어쓴 채 기름이 담긴 뿔 앞에 섭니다. 사무엘은 형들이 보는 가운데 그에게 기름을 붓고, 더는 아무 말도 하지 않습니다.',
-        next: '기름이 흘러내리다 →',
         journey: '조용히 기름부음을 받고, 다시 양 떼에게로 돌아갔다.',
         tag: '베들레헴'
       },
@@ -466,7 +635,102 @@
         verseRef: '— 사무엘상 18장 7절',
         p2: '이것이 그가 지나야 할 마지막 골짜기는 아닙니다 — 사울의 질투를 견뎌내야 하고, 광야에서 도망자로 여러 해를 보내야 하며, 훗날에는 왕위가 기다립니다. 그러나 모든 것은 여기서 시작됩니다: 칼보다 먼저 물매를 믿었던 한 소년으로부터.',
         journeyHeading: '당신의 여정',
-        again: '다시 골짜기를 걷기'
+        again: '다시 골짜기를 걷기',
+        chooseOther: '다른 이야기 선택하기'
+      },
+
+      mBrand: '출애굽기',
+      mFooter: '출애굽기 2–14장 · 일곱 장면으로 만나는 해방자의 이야기',
+      mChapterTags: ['서장','1장 / 7장','2장 / 7장','3장 / 7장','4장 / 7장','5장 / 7장','6장 / 7장'],
+      mTitle: {
+        eyebrow: '이집트, 기원전 약 13세기',
+        display: '모세',
+        sub: '파라오의 왕궁에서 자란 왕자, 미디안의 도망자 목동, 그리고 바다 건너편에서 기다리는 한 민족. 출애굽기 2장부터 14장까지의 이야기를 선택을 통해 직접 살아보세요.',
+        recordPrefix: '최고 기록: 위기 상황 ',
+        recordSuffix: '번 만에 바다를 건넘',
+        start: '이야기 시작하기'
+      },
+      mBasket: {
+        eyebrow: '레위 지파의 집',
+        h2: '지푸라기 바구니',
+        p1: '파라오는 태어나는 히브리 남자아이를 모두 나일강에 던지라고 명령합니다. 한 레위 여인이 아기를 석 달 동안 숨기다가, 더는 숨길 수 없게 되자 역청과 나무진을 바른 갈대 바구니를 만들어 강가 갈대숲 사이에 띄워 보냅니다.',
+        verse: '더 숨길 수 없게 되매, 그를 위하여 갈대 상자를 가져다가.',
+        verseRef: '— 출애굽기 2장 3절',
+        p2: '누이 미리암이 멀리서 지켜봅니다. 파라오의 딸이 목욕하러 내려왔다가 바구니를 발견하고, 아이의 울음소리를 듣습니다.',
+        choiceA: '미리암이 나서서 히브리 유모를 구해주겠다고 제안한다.',
+        choiceB: '미리암은 공주가 어떻게 할지 좀 더 지켜보며 숨어 있는다.',
+        choiceRisky: '갈대숲에서 소리쳐 공주가 아이를 데려가지 못하게 막는다.',
+        journeyA: '미리암이 나섰고 — 결국 친어머니가 파라오의 집에서 삯을 받으며 아이에게 젖을 먹였다.',
+        journeyB: '미리암은 움직이기 전에 좀 더 지켜보며 기다렸다.',
+        tag: '나일강'
+      },
+      mBush: {
+        eyebrow: '하나님의 산, 호렙',
+        h2: '떨기나무 불꽃',
+        p1: '수십 년 후, 모세는 히브리 노예를 때리던 사람을 죽이고 이집트에서 도망쳐 미디안의 목동이 되어 있습니다. 호렙산에서 그는 불타지만 타서 없어지지 않는 떨기나무를 봅니다. 불꽃 속에서 한 음성이 그의 이름을 부릅니다.',
+        verse: '나는 스스로 있는 자이니라. 너는 이스라엘 자손에게 이같이 이르기를 스스로 있는 자가 나를 너희에게 보내셨다 하라.',
+        verseRef: '— 출애굽기 3장 14절',
+        p2: '하나님은 그에게 이집트로 돌아가 파라오에게 백성을 놓아달라고 요구하라 명하십니다. 모세는 반문합니다 — 그는 말이 어눌하고, 아무것도 아닌 자이며, 이제 어느 나라에서도 설 자리가 없는 사람입니다.',
+        choiceA: '두려움을 안은 채로, 그 부르심을 받아들인다.',
+        choiceB: '가겠다고 답하기 전에, 먼저 표징을 구한다.',
+        choiceRisky: '단호히 거절하고, 미디안에서 계속 양을 친다.',
+        journeyA: '두려움을 안은 채, 떨기나무 앞에서 그러겠다고 답했다.',
+        journeyB: '표징을 구했고 — 세 가지 표징을 받았다.',
+        tag: '호렙산'
+      },
+      mPlagues: {
+        eyebrow: '파라오의 궁정',
+        h2: '내 백성을 보내라',
+        p1: '모세와 아론이 파라오 앞에 서서 말합니다. “이스라엘의 하나님 여호와께서 이렇게 말씀하시되, 내 백성을 보내라.” 파라오는 거절하고, 재앙이 시작됩니다 — 나일강이 피로 변하고, 개구리, 이, 파리, 가축의 돌림병, 종기, 우박, 메뚜기, 흑암이 차례로 이어지지만, 응답해야 할 자리마다 완악함만 돌아옵니다.',
+        p2: '아홉 가지 재앙이 왔다가 지나갑니다. 파라오의 요술사들조차 더는 따라오지 못합니다. 마지막 열 번째 심판이 다가올 밤에 선포됩니다.',
+        choiceA: '마지막으로 한 번 더, 파라오에게 분명하게 경고를 전한다.',
+        choiceB: '말을 아끼고, 표징 자체가 말하게 둔다.',
+        choiceRisky: '파라오의 궁정과의 관계를 생각해 경고의 수위를 낮춘다.',
+        journeyA: '마지막으로 한 번 더, 파라오의 얼굴 앞에서 분명히 경고했다.',
+        journeyB: '표징 하나하나가 스스로 말하게 두었다.',
+        tag: '파라오의 궁정'
+      },
+      mPassover: {
+        eyebrow: '유월절 밤',
+        h2: '유월절 밤',
+        p1: '모든 집에 흠 없는 어린 양을 잡아 해 질 무렵 죽이고, 그 피를 문설주와 상인방에 바르라는 명령이 내려집니다 — 여호와께서 이집트의 처음 난 것들을 치러 지나가실 때, 그 피가 표적이 되어 그 집을 넘어가실 것입니다.',
+        verse: '내가 그 피를 볼 때에 너희를 넘어가리니.',
+        verseRef: '— 출애굽기 12장 13절',
+        p2: '한밤중, 이집트에는 누군가 죽지 않은 집이 없습니다 — 문에 피가 발린 집들만 예외였습니다.',
+        choiceA: '명령받은 그대로 문설주에 피를 바르고, 아침까지 집 안에 머문다.',
+        choiceB: '지팡이를 손에 쥔 채, 서둘러 식사를 마치고 떠날 준비를 한다.',
+        choiceRisky: '문에 피를 바르기 전에, 이 경고가 정말인지 좀 더 지켜본다.',
+        journeyA: '명령받은 그대로 문설주에 피를 발랐다.',
+        journeyB: '지팡이를 손에 쥔 채 서둘러 먹고, 떠날 준비를 했다.',
+        tag: '고센 땅'
+      },
+      mRedsea: {
+        eyebrow: '갈대 바다',
+        h2: '갈라진 바닷물',
+        p1: '뒤에서는 파라오의 병거가 다가오고, 앞에는 바다가 놓여 있어 백성은 그 사이에 갇혀 있습니다. 모세가 바다 위로 손을 내밀자, 밤새도록 강한 동풍이 바다를 밀어내지만 — 양옆의 물벽은 손이 들려 있는 동안에만 버텨줍니다.',
+        holdHint: '눌러서 손을 들어 올리세요 · 또는 스페이스/엔터를 꾹',
+        holding: '손을 들고 있는 중',
+        released: '손이 내려가는 중 — 다시 들어올리세요',
+        ariaLabel: '바다 위로 손을 들어 올리세요. 이 영역을 누르고 있거나, 포커스한 뒤 스페이스 또는 엔터를 계속 누르고 있으면 백성이 건너는 동안 물이 갈라진 채 유지됩니다.',
+        initialMsg: '백성이 부르짖습니다. 모세가 지팡이를 들고, 바다 위로 손을 내뻗습니다.',
+        wobbleMsg: '물벽이 흔들립니다 — 팔이 내려가고 있습니다.',
+        closeCallMsg: '물이 거의 다시 합쳐질 뻔했습니다. 가까스로 다시 손을 들어올립니다.',
+        successMsg: '마지막 사람이 건너편 기슭에 닿습니다. 모세가 다시 한 번 바다 위로 손을 내밀자, 바다가 제자리로 돌아옵니다.',
+        journeyClean: '단 한 번의 위기도 없이 바다를 갈라놓았다.',
+        journeyCloseCallsPrefix: '위기 상황 ',
+        journeyCloseCallsSuffix: '번을 겪으며 바다를 건넜다.',
+        tag: '갈대 바다'
+      },
+      mEnd: {
+        eyebrow: '건너편 기슭',
+        h2: '바다의 노래',
+        p1: '물이 다시 밀려와 파라오의 병거와 기병을 덮으니, 그들을 뒤쫓아 바다로 들어간 그 군대 중 하나도 남지 않습니다. 건너편 기슭에서 미리암이 소고를 들자, 모든 여인이 그 뒤를 따라 춤을 추며 노래합니다:',
+        verse: '너희는 여호와를 찬송하라. 그는 높고 영화로우심이요, 말과 그 탄 자를 바다에 던지셨음이로다.',
+        verseRef: '— 출애굽기 15장 21절',
+        p2: '이것이 그가 이끌어야 할 마지막 광야는 아닙니다 — 아직 구해야 할 빵과 물이 있고, 올라야 할 율법의 산이 있으며, 약속의 땅에 이르기까지 사십 년의 방랑이 남아 있습니다. 그러나 모든 것은 여기서 시작됩니다: 손을 들어 올리고, 끝내 내리지 않았던 한 도망자 목동으로부터.',
+        journeyHeading: '당신의 여정',
+        again: '다시 바다를 건너기',
+        chooseOther: '다른 이야기 선택하기'
       }
     }
   };
@@ -515,8 +779,12 @@
   drawStars(0);
 
   /* ---------- state ---------- */
+  var mode = 'select'; // 'select' | 'david' | 'moses'
   var sceneIndex = 0;
+  var scenes = [];
   var journey = [];
+  var pickedCharacter = null; // staged choice on the select screen
+
   var stage = document.getElementById('stage');
   var chapterTag = document.getElementById('chapter-tag');
   var progressFill = document.getElementById('progress-fill');
@@ -524,30 +792,44 @@
   var footerEl = document.getElementById('site-footer');
   var langToggle = document.getElementById('lang-toggle');
 
-  var BEST_KEY = 'shepherd-king-best-stone';
+  var BEST_KEY_DAVID = 'shepherd-king-best-stone';
+  var BEST_KEY_MOSES = 'shepherd-king-best-redsea';
   var lastDuelResult = null;
-  var duelRafId = null;
-  var duelResizeHandler = null;
+  var gameRafId = null;
+  var gameResizeHandler = null;
 
-  function cleanupDuel(){
-    if(duelRafId){ cancelAnimationFrame(duelRafId); duelRafId = null; }
-    if(duelResizeHandler){ window.removeEventListener('resize', duelResizeHandler); duelResizeHandler = null; }
+  function cleanupGame(){
+    if(gameRafId){ cancelAnimationFrame(gameRafId); gameRafId = null; }
+    if(gameResizeHandler){ window.removeEventListener('resize', gameResizeHandler); gameResizeHandler = null; }
   }
 
   function applyChrome(){
     document.documentElement.setAttribute('lang', LANG);
-    brandLabel.textContent = t().brand;
-    footerEl.textContent = t().footer;
     langToggle.textContent = t().langToggleLabel;
-    chapterTag.textContent = t().chapterTags[sceneIndex];
+    if(mode === 'select'){
+      brandLabel.textContent = t().select.brand;
+      footerEl.textContent = t().select.footer;
+      chapterTag.textContent = '';
+      progressFill.style.width = '0%';
+    } else if(mode === 'david'){
+      brandLabel.textContent = t().brand;
+      footerEl.textContent = t().footer;
+      chapterTag.textContent = t().chapterTags[sceneIndex];
+      progressFill.style.width = Math.round((sceneIndex/(scenes.length-1))*100) + '%';
+    } else if(mode === 'moses'){
+      brandLabel.textContent = t().mBrand;
+      footerEl.textContent = t().mFooter;
+      chapterTag.textContent = t().mChapterTags[sceneIndex];
+      progressFill.style.width = Math.round((sceneIndex/(scenes.length-1))*100) + '%';
+    }
   }
 
   langToggle.addEventListener('click', function(){
     LANG = (LANG === 'en') ? 'ko' : 'en';
     localStorage.setItem(LANG_KEY, LANG);
     applyChrome();
-    cleanupDuel();
-    render(scenes[sceneIndex].key);
+    cleanupGame();
+    render(mode === 'select' ? 'select' : scenes[sceneIndex].key);
   });
 
   function icon(name, size){
@@ -558,28 +840,103 @@
       lyre: '<path d="M6 20V9c0-3 2-5 6-5s6 2 6 5v11"/><path d="M6 20h2M10 20h2M14 20h2M18 20h2"/>',
       sling: '<circle cx="12" cy="7" r="2.2"/><path d="M12 9v6M12 15l-5 5M12 15l5 5"/>',
       crown: '<path d="M4 18h16l-1.4-8-4 3-2.6-5-2.6 5-4-3L4 18Z"/>',
-      star: '<path d="M12 3l2.2 5.6L20 10l-4.6 3.6L16.6 20 12 16.6 7.4 20l1.2-6.4L4 10l5.8-1.4L12 3Z"/>'
+      star: '<path d="M12 3l2.2 5.6L20 10l-4.6 3.6L16.6 20 12 16.6 7.4 20l1.2-6.4L4 10l5.8-1.4L12 3Z"/>',
+      basket: '<path d="M5 10h14l-2 9H7L5 10Z"/><path d="M8 10c0-4 2-6 4-6s4 2 4 6"/>',
+      flame: '<path d="M12 3c2.5 3-1 4.5-1 7.5a3 3 0 1 0 6 0c0-2-1-3-1-5 3 2.2 4.5 5 4.5 8a7 7 0 1 1-14 0c0-4.2 3-6.3 5.5-10.5Z"/>',
+      wave: '<path d="M3 10c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/><path d="M3 15c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/><path d="M3 20c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/>',
+      door: '<path d="M6 20V5h12v15"/><path d="M4 20h16"/><circle cx="9.5" cy="9" r="1.1"/><circle cx="14.5" cy="9" r="1.1"/>',
+      hand: '<path d="M8 12V6a1.5 1.5 0 0 1 3 0v5M11 11V4.5a1.5 1.5 0 0 1 3 0V11M14 11.5V6a1.5 1.5 0 0 1 3 0v9c0 4-2.5 7-6 7s-6-2-7-5l-1.5-4a1.4 1.4 0 0 1 2.5-1.3L7 13"/>'
     };
     return '<svg width="'+size+'" height="'+size+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" style="color:var(--bronze)">'+icons[name]+'</svg>';
   }
 
-  /* ---------- scene data ---------- */
-  var scenes = [
+  /* ---------- scene tracks ---------- */
+  var scenesDavid = [
     { key:'title' },
-    { key:'hills' },
-    { key:'anoint' },
-    { key:'harp' },
-    { key:'valley' },
+    { key:'hills', cfg:{ icon:'crook', selfIndex:1, next:2,
+        content:[{p:'p1'},{verse:'verse',ref:'verseRef'}],
+        choices:[
+          {k:'A', field:'choiceA', journeyField:'journeyA'},
+          {k:'B', field:'choiceB', journeyField:'journeyB'},
+          {k:'C', field:'choiceRisky', risky:true}
+        ] } },
+    { key:'anoint', cfg:{ icon:'horn', next:3,
+        content:[{p:'p1'},{verse:'verse',ref:'verseRef'},{p:'p2'}],
+        fixedJourneyField:'journey' } },
+    { key:'harp', cfg:{ icon:'lyre', selfIndex:3, next:4,
+        content:[{p:'p1'},{p:'prompt'}],
+        choices:[
+          {k:'1', field:'choice1', journeyIsPrefixedLabel:true, revealField:'msg1'},
+          {k:'2', field:'choice2', journeyIsPrefixedLabel:true, revealField:'msg2'},
+          {k:'3', field:'choice3', journeyIsPrefixedLabel:true, revealField:'msg3'},
+          {k:'4', field:'choiceRisky', risky:true}
+        ] } },
+    { key:'valley', cfg:{ icon:'sling', selfIndex:4, next:5,
+        content:[{p:'p1'},{p:'p2'},{p:'p3'}],
+        choices:[
+          {k:'A', field:'choiceA', journeyField:'journey'},
+          {k:'B', field:'choiceRisky', risky:true}
+        ] } },
     { key:'duel' },
     { key:'end' }
   ];
 
+  var scenesMoses = [
+    { key:'mTitle' },
+    { key:'mBasket', cfg:{ icon:'basket', selfIndex:1, next:2,
+        content:[{p:'p1'},{verse:'verse',ref:'verseRef'},{p:'p2'}],
+        choices:[
+          {k:'A', field:'choiceA', journeyField:'journeyA'},
+          {k:'B', field:'choiceB', journeyField:'journeyB'},
+          {k:'C', field:'choiceRisky', risky:true}
+        ] } },
+    { key:'mBush', cfg:{ icon:'flame', selfIndex:2, next:3,
+        content:[{p:'p1'},{verse:'verse',ref:'verseRef'},{p:'p2'}],
+        choices:[
+          {k:'A', field:'choiceA', journeyField:'journeyA'},
+          {k:'B', field:'choiceB', journeyField:'journeyB'},
+          {k:'C', field:'choiceRisky', risky:true}
+        ] } },
+    { key:'mPlagues', cfg:{ icon:'wave', selfIndex:3, next:4,
+        content:[{p:'p1'},{p:'p2'}],
+        choices:[
+          {k:'A', field:'choiceA', journeyField:'journeyA'},
+          {k:'B', field:'choiceB', journeyField:'journeyB'},
+          {k:'C', field:'choiceRisky', risky:true}
+        ] } },
+    { key:'mPassover', cfg:{ icon:'door', selfIndex:4, next:5,
+        content:[{p:'p1'},{verse:'verse',ref:'verseRef'},{p:'p2'}],
+        choices:[
+          {k:'A', field:'choiceA', journeyField:'journeyA'},
+          {k:'B', field:'choiceB', journeyField:'journeyB'},
+          {k:'C', field:'choiceRisky', risky:true}
+        ] } },
+    { key:'mRedsea' },
+    { key:'mEnd' }
+  ];
+
   function go(i){
-    cleanupDuel();
+    cleanupGame();
     sceneIndex = i;
     applyChrome();
-    progressFill.style.width = Math.round((i/(scenes.length-1))*100) + '%';
     render(scenes[i].key);
+    window.scrollTo({top:0, behavior:'instant'});
+  }
+
+  function enterCharacter(which){
+    mode = which;
+    scenes = (which === 'david') ? scenesDavid : scenesMoses;
+    journey = [];
+    go(0);
+  }
+
+  function backToSelect(){
+    cleanupGame();
+    mode = 'select';
+    scenes = [];
+    pickedCharacter = null;
+    applyChrome();
+    render('select');
     window.scrollTo({top:0, behavior:'instant'});
   }
 
@@ -594,7 +951,7 @@
      risky option in a decision scene, then lets them step back into the fork
      and choose again — a dead branch, not a dead end. */
   function showParallel(branchKey, backIndex){
-    cleanupDuel();
+    cleanupGame();
     stage.innerHTML = '';
     var el = document.createElement('div');
     el.className = 'scene parallel-scene';
@@ -616,168 +973,159 @@
     el.className = 'scene';
     stage.appendChild(el);
 
-    if(key==='title') renderTitle(el);
-    if(key==='hills') renderHills(el);
-    if(key==='anoint') renderAnoint(el);
-    if(key==='harp') renderHarp(el);
-    if(key==='valley') renderValley(el);
-    if(key==='duel') renderDuel(el);
-    if(key==='end') renderEnd(el);
+    if(key === 'select') return renderSelect(el);
+    if(key === 'title') return renderCharTitle(el, 'title', BEST_KEY_DAVID, function(best){ return t().title.recordPrefix + best + t().title.recordSuffix; });
+    if(key === 'mTitle') return renderCharTitle(el, 'mTitle', BEST_KEY_MOSES, function(best){ return t().mTitle.recordPrefix + best + t().mTitle.recordSuffix; });
+    if(key === 'duel') return renderDuel(el);
+    if(key === 'mRedsea') return renderRedSea(el);
+    if(key === 'end') return renderEnd(el, 'end');
+    if(key === 'mEnd') return renderEnd(el, 'mEnd');
+    var def = scenes[sceneIndex];
+    if(def && def.cfg) return renderStoryScene(el, key, def.cfg);
   }
 
-  function renderTitle(el){
-    var s = t().title;
-    var best = localStorage.getItem(BEST_KEY);
+  function renderSelect(el){
+    var s = t().select;
+    el.innerHTML =
+      '<div class="title-screen">' +
+        '<p class="eyebrow">'+s.eyebrow+'</p>' +
+        '<h1 class="display">'+s.h1+'</h1>' +
+        '<p class="title-sub">'+s.sub+'</p>' +
+        '<div class="select-grid">' +
+          '<button class="select-card" id="pick-david" type="button"><h3>'+s.davidTitle+'</h3><p>'+s.davidBlurb+'</p></button>' +
+          '<button class="select-card" id="pick-moses" type="button"><h3>'+s.mosesTitle+'</h3><p>'+s.mosesBlurb+'</p></button>' +
+        '</div>' +
+        '<div class="cta-row"><button class="btn primary" id="select-next" disabled>'+s.start+'</button></div>' +
+      '</div>';
+    var cardDavid = el.querySelector('#pick-david');
+    var cardMoses = el.querySelector('#pick-moses');
+    var nextBtn = el.querySelector('#select-next');
+    function pick(which){
+      pickedCharacter = which;
+      cardDavid.classList.toggle('picked', which==='david');
+      cardMoses.classList.toggle('picked', which==='moses');
+      nextBtn.disabled = false;
+    }
+    cardDavid.addEventListener('click', function(){ pick('david'); });
+    cardMoses.addEventListener('click', function(){ pick('moses'); });
+    nextBtn.addEventListener('click', function(){
+      if(pickedCharacter) enterCharacter(pickedCharacter);
+    });
+  }
+
+  function renderCharTitle(el, key, bestStoreKey, recordText){
+    var s = t()[key];
+    var best = localStorage.getItem(bestStoreKey);
     el.innerHTML =
       '<div class="title-screen">' +
         '<p class="eyebrow">'+s.eyebrow+'</p>' +
         '<h1 class="display">'+s.display+'</h1>' +
         '<p class="title-sub">'+s.sub+'</p>' +
-        (best ? '<p class="record">'+s.recordPrefix+best+s.recordSuffix+'</p>' : '') +
-        '<div class="cta-row"><button class="btn primary" id="start-btn">'+s.start+'</button></div>' +
+        (best!==null ? '<p class="record">'+recordText(best)+'</p>' : '') +
+        '<div class="cta-row">' +
+          '<button class="btn primary" id="start-btn">'+s.start+'</button>' +
+          '<button class="btn secondary" id="back-btn">&larr; '+t().chooseOtherLabel+'</button>' +
+        '</div>' +
       '</div>';
     el.querySelector('#start-btn').addEventListener('click', function(){ go(1); });
+    el.querySelector('#back-btn').addEventListener('click', backToSelect);
   }
 
-  function renderHills(el){
-    var s = t().hills;
-    el.innerHTML =
-      '<div class="icon-row">'+icon('crook')+'<p class="eyebrow">'+s.eyebrow+'</p></div>' +
-      '<h2>'+s.h2+'</h2>' +
-      '<p>'+s.p1+'</p>' +
-      '<p class="verse">'+s.verse+'<br>'+s.verseRef+'</p>' +
-      '<div class="choices">' +
-        '<button class="choice-btn"><span class="k">A</span>'+s.choiceA+'</button>' +
-        '<button class="choice-btn"><span class="k">B</span>'+s.choiceB+'</button>' +
-        '<button class="choice-btn risk"><span class="k">C</span>'+s.choiceRisky+'</button>' +
-      '</div>';
-    var btns = el.querySelectorAll('.choice-btn');
-    btns[0].addEventListener('click', function(){
-      choiceRecord('hills', function(strs){ return strs.journeyA; });
-      go(2);
+  /* Generic renderer for every "read, optionally pick one option, confirm
+     with Next" scene in either character's track. Clicking a choice only
+     marks it picked; nothing is recorded or navigated until Next is
+     pressed, so a mis-click never skips text the player hasn't read. */
+  function renderStoryScene(el, sceneKey, cfg){
+    var s = t()[sceneKey];
+    var html = '<div class="icon-row">'+icon(cfg.icon)+'<p class="eyebrow">'+s.eyebrow+'</p></div>' +
+                '<h2>'+s.h2+'</h2>';
+    cfg.content.forEach(function(part){
+      if(part.p) html += '<p>'+s[part.p]+'</p>';
+      if(part.verse) html += '<p class="verse">'+s[part.verse]+'<br>'+s[part.ref]+'</p>';
     });
-    btns[1].addEventListener('click', function(){
-      choiceRecord('hills', function(strs){ return strs.journeyB; });
-      go(2);
-    });
-    btns[2].addEventListener('click', function(){ showParallel('hills', 1); });
-  }
-
-  function renderAnoint(el){
-    var s = t().anoint;
-    el.innerHTML =
-      '<div class="icon-row">'+icon('horn')+'<p class="eyebrow">'+s.eyebrow+'</p></div>' +
-      '<h2>'+s.h2+'</h2>' +
-      '<p>'+s.p1+'</p>' +
-      '<p class="verse">'+s.verse+'<br>'+s.verseRef+'</p>' +
-      '<p>'+s.p2+'</p>' +
-      '<div class="cta-row"><button class="btn primary" id="next-btn">'+s.next+'</button></div>';
-    el.querySelector('#next-btn').addEventListener('click', function(){
-      choiceRecord('anoint', function(strs){ return strs.journey; });
-      go(3);
-    });
-  }
-
-  function renderHarp(el){
-    var s = t().harp;
-    el.innerHTML =
-      '<div class="icon-row">'+icon('lyre')+'<p class="eyebrow">'+s.eyebrow+'</p></div>' +
-      '<h2>'+s.h2+'</h2>' +
-      '<p>'+s.p1+'</p>' +
-      '<p>'+s.prompt+'</p>' +
-      '<div class="choices">' +
-        '<button class="choice-btn"><span class="k">1</span>'+s.choice1+'</button>' +
-        '<button class="choice-btn"><span class="k">2</span>'+s.choice2+'</button>' +
-        '<button class="choice-btn"><span class="k">3</span>'+s.choice3+'</button>' +
-        '<button class="choice-btn risk"><span class="k">4</span>'+s.choiceRisky+'</button>' +
-      '</div>' +
-      '<p class="duel-msg" id="harp-msg"></p>';
-    var msgs = [s.msg1, s.msg2, s.msg3];
-    var btns = el.querySelectorAll('.choice-btn');
-    var msgEl = el.querySelector('#harp-msg');
-    for(var i=0;i<3;i++){
-      (function(i){
-        btns[i].addEventListener('click', function(){
-          msgEl.textContent = msgs[i];
-          for(var j=0;j<btns.length;j++) btns[j].disabled = true;
-          choiceRecord('harp', function(strs){
-            var currentLabels = [strs.choice1, strs.choice2, strs.choice3];
-            return strs.journeyPrefix + currentLabels[i];
-          });
-          setTimeout(function(){ go(4); }, 900);
-        });
-      })(i);
+    var hasChoices = cfg.choices && cfg.choices.length;
+    if(hasChoices){
+      html += '<div class="choices">' + cfg.choices.map(function(c,i){
+        var cls = 'choice-btn' + (c.risky ? ' risk' : '');
+        return '<button class="'+cls+'" data-idx="'+i+'" type="button"><span class="k">'+c.k+'</span>'+s[c.field]+'</button>';
+      }).join('') + '</div>';
+      html += '<p class="reveal-msg" id="reveal-msg"></p>';
     }
-    btns[3].addEventListener('click', function(){ showParallel('harp', 3); });
-  }
+    html += '<div class="cta-row"><button class="btn primary" id="next-btn"'+(hasChoices?' disabled':'')+'>'+t().nextLabel+'</button></div>';
+    el.innerHTML = html;
 
-  function renderValley(el){
-    var s = t().valley;
-    el.innerHTML =
-      '<div class="icon-row">'+icon('sling')+'<p class="eyebrow">'+s.eyebrow+'</p></div>' +
-      '<h2>'+s.h2+'</h2>' +
-      '<p>'+s.p1+'</p>' +
-      '<p>'+s.p2+'</p>' +
-      '<p>'+s.p3+'</p>' +
-      '<div class="choices">' +
-        '<button class="choice-btn"><span class="k">A</span>'+s.choiceA+'</button>' +
-        '<button class="choice-btn risk"><span class="k">B</span>'+s.choiceRisky+'</button>' +
-      '</div>';
-    var btns = el.querySelectorAll('.choice-btn');
-    btns[0].addEventListener('click', function(){
-      choiceRecord('valley', function(strs){ return strs.journey; });
-      go(5);
+    var selected = hasChoices ? null : 0;
+    var nextBtn = el.querySelector('#next-btn');
+    var revealEl = el.querySelector('#reveal-msg');
+    var btns = null;
+    if(hasChoices){
+      btns = el.querySelectorAll('.choice-btn');
+      btns.forEach(function(b, i){
+        b.addEventListener('click', function(){
+          selected = i;
+          for(var j=0;j<btns.length;j++) btns[j].classList.remove('picked');
+          b.classList.add('picked');
+          nextBtn.disabled = false;
+          var c = cfg.choices[i];
+          revealEl.textContent = c.revealField ? s[c.revealField] : '';
+        });
+      });
+    }
+    nextBtn.addEventListener('click', function(){
+      if(hasChoices){
+        var c = cfg.choices[selected];
+        if(c.risky){ showParallel(cfg.branchKey || sceneKey, cfg.selfIndex); return; }
+        choiceRecord(sceneKey, c.journeyIsPrefixedLabel
+          ? function(strs){ return strs.journeyPrefix + strs[c.field]; }
+          : function(strs){ return strs[c.journeyField]; });
+      } else if(cfg.fixedJourneyField){
+        choiceRecord(sceneKey, (function(field){ return function(strs){ return strs[field]; }; })(cfg.fixedJourneyField));
+      }
+      go(cfg.next);
     });
-    btns[1].addEventListener('click', function(){ showParallel('valley', 4); });
   }
 
-  /* ---------- duel minigame ---------- */
+  /* ---------- duel minigame (David) ---------- */
   function renderDuel(el){
     var s = t().duel;
     el.innerHTML =
       '<div class="icon-row">'+icon('sling')+'<p class="eyebrow">'+s.eyebrow+'</p></div>' +
       '<h2>'+s.h2+'</h2>' +
       '<p>'+s.p1+'</p>' +
-      '<div class="duel-wrap">' +
-        '<canvas id="duel-canvas" width="1000" height="340" tabindex="0" aria-label="'+s.ariaLabel+'"></canvas>' +
+      '<div class="game-wrap">' +
+        '<canvas id="duel-canvas" class="game-canvas-el" width="1000" height="340" tabindex="0" aria-label="'+s.ariaLabel+'"></canvas>' +
       '</div>' +
-      '<div class="duel-hud"><div class="stones" id="stone-pips"></div><div id="power-readout" class="mono">'+s.dragHint+'</div></div>' +
-      '<p class="duel-msg" id="duel-msg">'+s.initialMsg+'</p>';
+      '<div class="game-hud"><div class="stones" id="stone-pips"></div><div id="power-readout" class="mono">'+s.dragHint+'</div></div>' +
+      '<p class="reveal-msg" id="duel-msg">'+s.initialMsg+'</p>' +
+      '<div class="cta-row" id="duel-next-row" hidden><button class="btn primary" id="duel-next-btn">'+t().nextLabel+'</button></div>';
+
+    el.querySelector('#duel-next-btn').addEventListener('click', function(){ go(6); });
 
     var canvas = el.querySelector('#duel-canvas');
     var ctx = canvas.getContext('2d');
     var pipsEl = el.querySelector('#stone-pips');
     var powerEl = el.querySelector('#power-readout');
     var msgEl = el.querySelector('#duel-msg');
+    var nextRow = el.querySelector('#duel-next-row');
 
-    // Every visual size (Goliath, the sling, the stone) stays fixed pixels
-    // regardless of canvas width — only the THROW itself scales. `launchK` is
-    // solved for directly from the actual geometry each time the canvas is
-    // fit: given how far Goliath now sits from the sling (he's pinned to
-    // CW-150, so a wider canvas puts him further away) and how much higher
-    // his forehead sits than the launch point, this finds the minimum launch
-    // speed a projectile-motion throw needs at its best angle to reach him,
-    // then adds a margin so a well-aimed (not just perfectly-aimed) full pull
-    // gets there — at any canvas width, including one that changes later.
     var GRAVITY = 0.32, LAUNCH_MARGIN = 1.25;
     var CW, CH, launchK = 0.16;
     var pivot = {x:70, y:0};
     var restOffset = 30, bandAnchor = 14, maxD = 70;
     function computeLaunchK(){
-      var D = (CW - 150) - pivot.x;            // horizontal distance, sling to Goliath
-      var launchY = (CH - 40) - restOffset;    // stone height at full pull-back
-      var targetY = (CH - 46) - 138;           // Goliath's forehead height
-      var H = launchY - targetY;               // how much higher the forehead sits
+      var D = (CW - 150) - pivot.x;
+      var launchY = (CH - 40) - restOffset;
+      var targetY = (CH - 46) - 138;
+      var H = launchY - targetY;
       var bestSpeed2 = Infinity;
       for(var a=5; a<=85; a+=0.25){
-        var rad = a*Math.PI/180, s = Math.sin(rad), c = Math.cos(rad);
-        var denom = D*s*c - H*c*c;
-        if(denom<=0) continue;                 // this angle can't reach the height at all
+        var rad = a*Math.PI/180, sn = Math.sin(rad), cs = Math.cos(rad);
+        var denom = D*sn*cs - H*cs*cs;
+        if(denom<=0) continue;
         var speed2 = 0.5*GRAVITY*D*D/denom;
         if(speed2 < bestSpeed2) bestSpeed2 = speed2;
       }
-      var minSpeed = Math.sqrt(bestSpeed2);
-      return (minSpeed*LAUNCH_MARGIN)/maxD;
+      return (Math.sqrt(bestSpeed2)*LAUNCH_MARGIN)/maxD;
     }
     function fitCanvas(){
       var rect = canvas.getBoundingClientRect();
@@ -789,16 +1137,16 @@
     }
     fitCanvas();
 
-    duelResizeHandler = function(){ fitCanvas(); };
-    window.addEventListener('resize', duelResizeHandler);
+    gameResizeHandler = function(){ fitCanvas(); };
+    window.addEventListener('resize', gameResizeHandler);
 
     var stonesTotal = 5, stonesUsed = 0, gameOver = false;
     var dragging = false, dragPt = null;
-    var projectile = null; // {x,y,vx,vy}
+    var projectile = null;
     var goliathHitFlash = 0;
     var goliathTarget = null;
     var canvasFocused = false;
-    var keyAim = { angle: 55, power: 55 }; // angle: degrees of pull above horizontal; power: 0-100
+    var keyAim = { angle: 55, power: 55 };
     var t0 = performance.now();
 
     function updatePips(){
@@ -818,15 +1166,10 @@
       return { x: baseX + sway, groundY: groundY };
     }
 
-    // Where the sling sits when pulled back by (angle, power) via the keyboard —
-    // shares the same rest point and max-pull radius as a pointer drag.
     function keyAimPoint(){
       var rad = keyAim.angle * Math.PI/180;
       var frac = keyAim.power/100;
-      return {
-        x: pivot.x - Math.cos(rad)*frac*maxD,
-        y: (pivot.y-restOffset) + Math.sin(rad)*frac*maxD
-      };
+      return { x: pivot.x - Math.cos(rad)*frac*maxD, y: (pivot.y-restOffset) + Math.sin(rad)*frac*maxD };
     }
 
     function drawBand(stoneX, stoneY, dashed){
@@ -837,8 +1180,6 @@
       if(dashed) ctx.setLineDash([]);
     }
 
-    // Mirrors fireStone's actual physics (launchK, fixed gravity) so the dashed
-    // preview always lands where the real throw will.
     function drawTrajectoryPreview(stoneX, stoneY){
       var pdx = pivot.x - stoneX, pdy = (pivot.y-restOffset) - stoneY;
       var px=stoneX, py=stoneY, ppvx=pdx*launchK, ppvy=pdy*launchK;
@@ -906,7 +1247,6 @@
         ctx.fillStyle = '#caa257';
         ctx.beginPath(); ctx.arc(stoneX, stoneY, 6, 0, Math.PI*2); ctx.fill();
       }
-
       if(projectile){
         ctx.fillStyle = '#f0c877';
         ctx.beginPath(); ctx.arc(projectile.x, projectile.y, 5.5, 0, Math.PI*2); ctx.fill();
@@ -950,9 +1290,6 @@
       dragPt = null;
       fireStone(stoneX, stoneY);
     });
-
-    // Keyboard path: arrow keys adjust the same pull that a drag would set,
-    // Enter/Space releases it — the duel is fully playable without a pointer.
     canvas.addEventListener('focus', function(){
       canvasFocused = true;
       if(!gameOver && !projectile) powerEl.textContent = s.powerLabel + keyAim.power + '%';
@@ -965,10 +1302,7 @@
       else if(e.key==='ArrowLeft'){ keyAim.angle = Math.min(80, keyAim.angle+3); }
       else if(e.key==='ArrowRight'){ keyAim.angle = Math.max(15, keyAim.angle-3); }
       else if(e.key===' ' || e.key==='Enter' || e.key==='Spacebar'){
-        var kp = keyAimPoint();
-        e.preventDefault();
-        fireStone(kp.x, kp.y);
-        return;
+        var kp = keyAimPoint(); e.preventDefault(); fireStone(kp.x, kp.y); return;
       } else { return; }
       e.preventDefault();
       powerEl.textContent = s.powerLabel + keyAim.power + '%';
@@ -978,10 +1312,8 @@
       gameOver = true;
       lastDuelResult = hitStoneNumber;
       if(hit){
-        var best = localStorage.getItem(BEST_KEY);
-        if(!best || hitStoneNumber < parseInt(best,10)){
-          localStorage.setItem(BEST_KEY, String(hitStoneNumber));
-        }
+        var best = localStorage.getItem(BEST_KEY_DAVID);
+        if(!best || hitStoneNumber < parseInt(best,10)) localStorage.setItem(BEST_KEY_DAVID, String(hitStoneNumber));
       }
       choiceRecord('duel', function(strs){
         if(hit && hitStoneNumber<=1) return strs.journeyOne;
@@ -989,7 +1321,8 @@
         return strs.journeyExhausted;
       });
       msgEl.textContent = hit ? s.hitMsg : s.exhaustedMsg;
-      setTimeout(function(){ go(6); }, 1600);
+      nextRow.hidden = false;
+      el.querySelector('#duel-next-btn').focus();
     }
 
     function tick(now){
@@ -1002,14 +1335,11 @@
         if(target){
           var dxh = projectile.x-target.x, dyh = projectile.y-target.y;
           if(Math.sqrt(dxh*dxh+dyh*dyh) < target.forehead+5){
-            goliathHitFlash = 14;
-            projectile = null;
-            endGame(stonesUsed, true);
+            goliathHitFlash = 14; projectile = null; endGame(stonesUsed, true);
           } else if(projectile && target.body &&
                     projectile.x>target.body.x && projectile.x<target.body.x+target.body.w &&
                     projectile.y>target.body.y && projectile.y<target.body.y+target.body.h){
-            goliathHitFlash = 8;
-            projectile = null;
+            goliathHitFlash = 8; projectile = null;
             if(stonesUsed>=stonesTotal){ endGame(stonesTotal, false); }
             else { msgEl.textContent = s.glanceMsg; powerEl.textContent = s.dragHint; }
           } else if(projectile.y>CH || projectile.x>CW || projectile.x<0){
@@ -1019,16 +1349,170 @@
           }
         }
       }
-      if(!gameOver){
-        drawScene(tm);
-        duelRafId = requestAnimationFrame(tick);
-      }
+      if(!gameOver){ drawScene(tm); gameRafId = requestAnimationFrame(tick); }
     }
-    duelRafId = requestAnimationFrame(tick);
+    gameRafId = requestAnimationFrame(tick);
   }
 
-  function renderEnd(el){
-    var s = t().end;
+  /* ---------- Red Sea minigame (Moses) ---------- */
+  function renderRedSea(el){
+    var s = t().mRedsea;
+    el.innerHTML =
+      '<div class="icon-row">'+icon('wave')+'<p class="eyebrow">'+s.eyebrow+'</p></div>' +
+      '<h2>'+s.h2+'</h2>' +
+      '<p>'+s.p1+'</p>' +
+      '<div class="game-wrap">' +
+        '<canvas id="redsea-canvas" class="game-canvas-el" width="1000" height="340" tabindex="0" aria-label="'+s.ariaLabel+'"></canvas>' +
+      '</div>' +
+      '<div class="game-hud"><div class="meter-track"><div class="meter-fill" id="redsea-meter"></div></div><div id="redsea-readout" class="mono">'+s.holdHint+'</div></div>' +
+      '<p class="reveal-msg" id="redsea-msg">'+s.initialMsg+'</p>' +
+      '<div class="cta-row" id="redsea-next-row" hidden><button class="btn primary" id="redsea-next-btn">'+t().nextLabel+'</button></div>';
+
+    el.querySelector('#redsea-next-btn').addEventListener('click', function(){ go(6); });
+
+    var canvas = el.querySelector('#redsea-canvas');
+    var ctx = canvas.getContext('2d');
+    var meterFill = el.querySelector('#redsea-meter');
+    var readout = el.querySelector('#redsea-readout');
+    var msgEl = el.querySelector('#redsea-msg');
+    var nextRow = el.querySelector('#redsea-next-row');
+
+    var CW, CH;
+    function fitCanvas(){
+      var rect = canvas.getBoundingClientRect();
+      CW = canvas.width = rect.width * 2;
+      CH = canvas.height = rect.height * 2;
+      ctx.setTransform(2,0,0,2,0,0);
+      CW = rect.width; CH = rect.height;
+    }
+    fitCanvas();
+    gameResizeHandler = function(){ fitCanvas(); };
+    window.addEventListener('resize', gameResizeHandler);
+
+    var HOLD_RATE = 100/9000;   // % per ms held
+    var DECAY_RATE = 100/3200;  // % per ms released (drains faster than it fills)
+    var progress = 0, holding = false, gameOver = false, closeCalls = 0;
+    var wasBelowThreshold = false;
+    var chariotStart = performance.now();
+    var canvasFocused = false;
+    var t0 = performance.now();
+    var lastTm = 0;
+    var msgCooldown = 0;
+
+    function setHolding(v){
+      if(gameOver) return;
+      holding = v;
+      readout.textContent = holding ? s.holding : s.released;
+    }
+
+    canvas.addEventListener('pointerdown', function(e){ e.preventDefault(); canvas.setPointerCapture(e.pointerId); setHolding(true); });
+    canvas.addEventListener('pointerup', function(){ setHolding(false); });
+    canvas.addEventListener('pointercancel', function(){ setHolding(false); });
+    canvas.addEventListener('lostpointercapture', function(){ setHolding(false); });
+    canvas.addEventListener('focus', function(){ canvasFocused = true; });
+    canvas.addEventListener('blur', function(){ canvasFocused = false; setHolding(false); });
+    canvas.addEventListener('keydown', function(e){
+      if(e.key===' ' || e.key==='Enter' || e.key==='Spacebar'){ e.preventDefault(); setHolding(true); }
+    });
+    canvas.addEventListener('keyup', function(e){
+      if(e.key===' ' || e.key==='Enter' || e.key==='Spacebar'){ e.preventDefault(); setHolding(false); }
+    });
+
+    function drawScene(tm, dt){
+      ctx.clearRect(0,0,CW,CH);
+      var g = ctx.createLinearGradient(0,0,0,CH);
+      g.addColorStop(0,'#141a30'); g.addColorStop(1,'#1c2340');
+      ctx.fillStyle = g; ctx.fillRect(0,0,CW,CH);
+
+      var pathW = CW*0.42;
+      var pathL = CW*0.5 - pathW/2, pathR = CW*0.5 + pathW/2;
+      var shudder = holding ? 0 : Math.min(10, (100-progress)*0.06);
+      var jitter = PREFERS_REDUCED_MOTION ? 0 : Math.sin(tm*0.02)*shudder;
+
+      ctx.fillStyle = '#1f3a52';
+      ctx.fillRect(0, 0, pathL - jitter, CH);
+      ctx.fillRect(pathR + jitter, 0, CW - (pathR+jitter), CH);
+      ctx.strokeStyle = 'rgba(120,190,220,.35)'; ctx.lineWidth = 2;
+      for(var w=0; w<5; w++){
+        ctx.beginPath();
+        for(var x=0; x<pathL; x+=8){ var yy = 20 + w*60 + Math.sin((x+tm*0.05)*0.05)*6; if(x===0) ctx.moveTo(x,yy); else ctx.lineTo(x,yy); }
+        ctx.stroke();
+        ctx.beginPath();
+        for(var x2=pathR+jitter; x2<CW; x2+=8){ var yy2 = 20 + w*60 + Math.sin((x2+tm*0.05)*0.05)*6; if(x2===pathR+jitter) ctx.moveTo(x2,yy2); else ctx.lineTo(x2,yy2); }
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = '#2a2416';
+      ctx.fillRect(pathL - jitter, 0, (pathR+jitter)-(pathL-jitter), CH);
+
+      var travel = Math.min(1, progress/100);
+      var peopleN = 6;
+      for(var i=0;i<peopleN;i++){
+        var px = pathL + 10 + (pathR-pathL-20) * Math.max(0, Math.min(1, travel*1.3 - i*0.09));
+        var py = CH*0.35 + (i%3)*22 + 6;
+        ctx.fillStyle = 'rgba(233,223,196,.8)';
+        ctx.beginPath(); ctx.arc(px, py, 4, 0, Math.PI*2); ctx.fill();
+      }
+
+      var chariotElapsed = tm;
+      var chariotX = pathL - 60 + Math.min(pathL+40, chariotElapsed*0.012);
+      ctx.fillStyle = 'rgba(164,67,47,.85)';
+      ctx.fillRect(Math.max(-40,chariotX-16), CH-40, 30, 14);
+      ctx.beginPath(); ctx.arc(Math.max(-40,chariotX-1), CH-26, 6, 0, Math.PI*2); ctx.fill();
+
+      var moseX = pathL - 22, moseY = CH-30;
+      ctx.strokeStyle = '#caa257'; ctx.lineWidth = 3; ctx.lineCap='round';
+      var armLift = holding ? -34 : -34 + Math.min(20, (100-progress)*0.1);
+      ctx.beginPath(); ctx.moveTo(moseX, moseY); ctx.lineTo(moseX, moseY-30); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(moseX, moseY-24); ctx.lineTo(moseX+10, moseY+armLift); ctx.stroke();
+      ctx.fillStyle = '#f0c877'; ctx.beginPath(); ctx.arc(moseX, moseY-34, 6, 0, Math.PI*2); ctx.fill();
+
+      meterFill.style.width = Math.round(progress) + '%';
+    }
+
+    function tick(now){
+      var dt = now - lastTm; if(!lastTm) dt = 16; lastTm = now;
+      var tm = now - t0;
+      if(!gameOver){
+        var below = progress < 25;
+        if(holding){
+          progress = Math.min(100, progress + HOLD_RATE*dt);
+        } else {
+          progress = Math.max(0, progress - DECAY_RATE*dt);
+        }
+        if(below && progress > 40 && wasBelowThreshold){
+          closeCalls += 1;
+          msgEl.textContent = s.closeCallMsg;
+          wasBelowThreshold = false;
+        }
+        if(progress < 20) wasBelowThreshold = true;
+        if(!holding && progress > 0 && progress < 60 && msgCooldown<=0){
+          msgEl.textContent = s.wobbleMsg;
+          msgCooldown = 900;
+        }
+        if(msgCooldown>0) msgCooldown -= dt;
+
+        if(progress >= 100){
+          gameOver = true;
+          var best = localStorage.getItem(BEST_KEY_MOSES);
+          if(best===null || closeCalls < parseInt(best,10)) localStorage.setItem(BEST_KEY_MOSES, String(closeCalls));
+          choiceRecord('mRedsea', function(strs){
+            return closeCalls===0 ? strs.journeyClean : (strs.journeyCloseCallsPrefix + closeCalls + strs.journeyCloseCallsSuffix);
+          });
+          msgEl.textContent = s.successMsg;
+          readout.textContent = '';
+          nextRow.hidden = false;
+          el.querySelector('#redsea-next-btn').focus();
+        }
+      }
+      drawScene(tm, dt);
+      if(!gameOver){ gameRafId = requestAnimationFrame(tick); }
+    }
+    gameRafId = requestAnimationFrame(tick);
+  }
+
+  function renderEnd(el, key){
+    var s = t()[key];
     var list = journey.map(function(j){
       var sceneStrs = t()[j.sceneKey];
       return '<li><span class="tag">'+sceneStrs.tag+'</span>'+j.resolver(sceneStrs)+'</li>';
@@ -1043,14 +1527,16 @@
       '<ul class="journey">' + list + '</ul>' +
       '<div class="cta-row">' +
         '<button class="btn primary" id="again-btn">'+s.again+'</button>' +
+        '<button class="btn secondary" id="other-btn">'+s.chooseOther+'</button>' +
       '</div>';
     el.querySelector('#again-btn').addEventListener('click', function(){
       journey = [];
       lastDuelResult = null;
       go(0);
     });
+    el.querySelector('#other-btn').addEventListener('click', backToSelect);
   }
 
-  go(0);
+  render('select');
 })();
 </script>

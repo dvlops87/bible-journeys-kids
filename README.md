@@ -1,17 +1,20 @@
-# The Shepherd King
+# Two Journeys
 
-A bilingual (English/Korean) interactive retelling of David and Goliath (1 Samuel 16–18), built as a single-file HTML/CSS/JS game — no build step, no dependencies.
+A bilingual (English/Korean) interactive retelling of two callings from Scripture — David (1 Samuel 16–18) and Moses (Exodus 2–14) — built as a single-file HTML/CSS/JS game. No build step, no dependencies.
 
 - **[index.html](index.html)** — the game itself. Open directly in a browser, or serve via GitHub Pages.
-- **[report.html](report.html)** — a project report covering the narrative design, duel physics, quality review, and development iteration log.
+- **[report.html](report.html)** — a project report covering the original narrative design, duel physics, and quality review (written before the Moses track was added).
 
 ## Highlights
 
-- Seven narrative chapters dramatizing nine cited passages from 1 Samuel 16–18
-- A physics-based slingshot duel (drag-to-aim or keyboard: arrow keys + Enter/Space) whose launch speed is solved from the live canvas geometry, so it reaches Goliath at any screen size
-- Three branching "parallel timeline" detours for choices Scripture doesn't take, clearly marked as non-canon
-- Full English/Korean localization with an in-game language toggle
-- `prefers-reduced-motion` support, keyboard operability, and `localStorage`-backed best-score/language persistence
+- A character-select screen: play David's rise from shepherd to king, or Moses' call from fugitive shepherd to deliverer
+- Every scene reads first and confirms second — picking an option only marks it selected; nothing is recorded or advanced until you press **Next**, so there's no accidental click-through
+- Two physics-driven minigames:
+  - **The Duel** (David) — drag-to-aim or keyboard slingshot; launch speed is solved from the live canvas geometry so a good throw reaches Goliath at any screen size
+  - **The Waters Stand Apart** (Moses) — press-and-hold (pointer or Space/Enter) to keep the Red Sea parted while Israel crosses; let go too long and the walls start to close
+- Seven branching "parallel timeline" detours (3 for David, 4 for Moses) for the choices Scripture doesn't take, clearly marked as non-canon and always returning you to the fork rather than ending the game
+- Full English/Korean localization with an in-game language toggle that never mixes languages mid-journey
+- `prefers-reduced-motion` support, full keyboard operability, and `localStorage`-backed best-score/language persistence per story
 
 ## Running locally
 
